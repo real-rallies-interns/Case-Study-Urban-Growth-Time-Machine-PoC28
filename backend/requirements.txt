@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pandas
+geopandas
+pydantic
+python-dotenv
+numpy
+rasterio
+shapely

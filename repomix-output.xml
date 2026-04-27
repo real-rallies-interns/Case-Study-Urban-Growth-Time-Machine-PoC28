@@ -1,0 +1,2166 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+backend/
+  app/
+    mock/
+      generator.py
+    schemas/
+      growth.py
+    services/
+      spatial_service.py
+    main.py
+  .env
+  README.md
+  requirements.txt
+frontend/
+  .git/
+    hooks/
+      applypatch-msg.sample
+      commit-msg.sample
+      fsmonitor-watchman.sample
+      post-update.sample
+      pre-applypatch.sample
+      pre-commit.sample
+      pre-merge-commit.sample
+      pre-push.sample
+      pre-rebase.sample
+      pre-receive.sample
+      prepare-commit-msg.sample
+      push-to-checkout.sample
+      sendemail-validate.sample
+      update.sample
+    info/
+      exclude
+    logs/
+      refs/
+        heads/
+          main
+      HEAD
+    objects/
+      00/
+        4145cddf3f9db91b57b9cb596683c8eb420862
+      05/
+        e726d1b4201bc8c7716d2b058279676582e8c0
+      11/
+        940fd7840a136dedb0054a69d69df6dbd3adcb
+      3f/
+        36f7c5c4cfb7fb3c745bfd7d38b2d21a8c441d
+      43/
+        c994c2d3617f947bcb5adf1933e21dabe46bb5
+      51/
+        74b28c565c285e3e312ec5178be64fbeca8398
+      52/
+        0a6378500902b888f6d381a0d32211d45b5047
+      56/
+        7f17b0d7c7fb662c16d4357dd74830caf2dccb
+      5e/
+        f6a520780202a1d6addd833d800ccb1ecac0bb
+      61/
+        e36849cf7cfa9f1f71b4a3964a4953e3e243d3
+      6f/
+        0af958bb352f8601598bf43397ba1911e6df4c
+      71/
+        8d6fea4835ec2d246af9800eddb7ffb276240c
+      77/
+        053960334e2e34dc584dea8019925c3b4ccca9
+      8b/
+        d0e39085d5260e7f8faffcad2fdc45e10aef33
+      8f/
+        8d07d25a701cc0879222fe43f135f700c03654
+      97/
+        6eb90df142ef2c4f3f39cee8b0e4c4f4771b62
+      a2/
+        dc41ecee5ec435200fe7cba2bde4107f823774
+      b2/
+        b2a44f6ebc70c450043c05a002e7a93ba5d651
+      c8/
+        8f389de09f418da376598c42e8788d4fb6d172
+      c9/
+        b07a27f98093286aab4a75982343d5323a698d
+      cf/
+        9c65d3e0676a0169374d827f7abb97497789ef
+      e2/
+        15bc4ccf138bbc38ad58ad57e92135484b3c0f
+      e9/
+        ffa3083ad279ecf95fd8eae59cb253e9a539c4
+      f9/
+        4c3e6ca3436d35e57dd03ad303c01ca10f1066
+    refs/
+      heads/
+        main
+    COMMIT_EDITMSG
+    config
+    description
+    HEAD
+    index
+  public/
+    file.svg
+    globe.svg
+    mock_data.json
+    next.svg
+    vercel.svg
+    window.svg
+  src/
+    app/
+      favicon.ico
+      globals.css
+      layout.tsx
+      page.tsx
+    components/
+      MapComponent.tsx
+    lib/
+      api.ts
+  .gitignore
+  AGENTS.md
+  CLAUDE.md
+  eslint.config.mjs
+  next.config.ts
+  package.json
+  postcss.config.mjs
+  README.md
+  tsconfig.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="backend/app/mock/generator.py">
+import json
+import random
+from datetime import datetime
+from typing import List
+
+def generate_mock_growth_data(aoi_id: str) -> dict:
+    years = [2018, 2019, 2020, 2021, 2022, 2023]
+    base_area = 50.0
+    base_pop = 1200.0
+    
+    metrics = []
+    prev_area = None
+    
+    for year in years:
+        growth = random.uniform(2.0, 8.0)
+        current_area = base_area + (growth * (year - 2018))
+        current_pop = base_pop + (random.uniform(50, 200) * (year - 2018))
+        
+        velocity = None
+        if prev_area:
+            velocity = ((current_area - prev_area) / prev_area) * 100
+        
+        metrics.append({
+            "year": year,
+            "built_up_area_sqkm": round(current_area, 2),
+            "population_density": round(current_pop, 2),
+            "growth_velocity_pct": round(velocity, 2) if velocity else 0.0
+        })
+        prev_area = current_area
+        
+    return {
+        "aoi_id": aoi_id,
+        "time_window": "2018-2023",
+        "metrics": metrics,
+        "geojson_url": "/mock/growth_boundary.json",
+        "insight": "Residential expansion moving west; 15% increase in built-up area detected since 2018."
+    }
+
+def save_mock_data():
+    data = generate_mock_growth_data("mock_city_001")
+    with open("/Users/ananthuanil/Internship/2nd project/2ndprject/backend/app/mock/mock_data.json", "w") as f:
+        json.dump(data, f, indent=4)
+
+if __name__ == "__main__":
+    save_mock_data()
+</file>
+
+<file path="backend/app/schemas/growth.py">
+from pydantic import BaseModel
+from typing import List, Optional
+from datetime import datetime
+
+class AOIBase(BaseModel):
+    name: str
+    latitude: float
+    longitude: float
+    zoom: float
+
+class AOI(AOIBase):
+    id: str
+    created_at: datetime
+
+class GrowthMetric(BaseModel):
+    year: int
+    built_up_area_sqkm: float
+    population_density: float
+    growth_velocity_pct: Optional[float] = None
+
+class ChangeDetectionResponse(BaseModel):
+    aoi_id: str
+    time_window: str
+    metrics: List[GrowthMetric]
+    geojson_url: str
+    insight: str
+    intelligence_score: float # 0.0 to 1.0 based on growth vs population
+
+class AOISave(AOIBase):
+    user_id: str
+
+class AOIDb(AOISave):
+    id: str
+    created_at: datetime
+</file>
+
+<file path="backend/app/services/spatial_service.py">
+import geopandas as gpd
+from shapely.geometry import Point, box
+from typing import List, Dict
+import numpy as np
+
+class SpatialIntelligenceService:
+    @staticmethod
+    def calculate_urban_growth(lat: float, lon: float, buffer_km: float = 5.0) -> Dict:
+        """
+        Simulates the logic of detecting urban growth within a buffer zone.
+        In a production environment, this would query Sentinel-2 imagery.
+        """
+        # Create a bounding box for the AOI
+        # 1 degree is roughly 111km
+        delta = buffer_km / 111.0
+        aoi_polygon = box(lon - delta, lat - delta, lon + delta, lat + delta)
+        
+        # Simulate building footprint detection
+        # Logic: Growth velocity is higher in outskirts than city center
+        total_area = aoi_polygon.area
+        
+        # Placeholder for real image processing (Natural -> Urban transition)
+        # We simulate this by generating growth percentages based on location
+        growth_rate = np.random.uniform(5.0, 18.0) 
+        
+        return {
+            "aoi_area_sqkm": round(buffer_km ** 2, 2),
+            "detected_growth_velocity": round(growth_rate, 2),
+            "land_use_split": {
+                "urban": round(growth_rate + 20, 2),
+                "natural": round(80 - growth_rate, 2)
+            }
+        }
+
+    @staticmethod
+    def generate_growth_insights(metrics: List[Dict]) -> str:
+        """
+        Intelligence Layer: Converts raw numbers into actionable text.
+        """
+        if not metrics:
+            return "Insufficient data for trend analysis."
+            
+        recent = metrics[-1]
+        baseline = metrics[0]
+        
+        total_diff = round(recent['built_up_area_sqkm'] - baseline['built_up_area_sqkm'], 2)
+        
+        if total_diff > 10:
+            return f"Critical expansion detected: Built-up area increased by {total_diff:.2f}sqkm. Infrastructure demand is peaking in the western corridors."
+        return "Stable growth observed. Urban density is consolidating within existing boundaries."
+</file>
+
+<file path="backend/app/main.py">
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from app.schemas.growth import ChangeDetectionResponse, AOISave, AOIDb
+from app.mock.generator import generate_mock_growth_data
+from app.services.spatial_service import SpatialIntelligenceService
+import os
+import uuid
+from datetime import datetime
+from typing import List
+
+app = FastAPI(title="Urban Growth Time Machine API")
+
+# Mock Database for AOIs
+aoi_db = {}
+
+# Enable CORS for Next.js frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+async def root():
+    return {"status": "online", "message": "Urban Growth Time Machine Backend Active"}
+
+@app.get("/api/v1/growth/{aoi_id}", response_model=ChangeDetectionResponse)
+async def get_growth_metrics(aoi_id: str):
+    """
+    SECTION 2: INTELLIGENCE LAYER (MANDATORY)
+    Transforms raw outputs into predictive insights.
+    """
+    try:
+        data = generate_mock_growth_data(aoi_id)
+        
+        # Intelligence Logic
+        dynamic_insight = SpatialIntelligenceService.generate_growth_insights(data['metrics'])
+        
+        # Intelligence Score Calculation (Growth vs Population mismatch)
+        # Higher score = critical infrastructure demand
+        latest = data['metrics'][-1]
+        growth_vel = latest['growth_velocity_pct']
+        pop_vel = 5.0 # Baseline pop growth
+        intelligence_score = min(1.0, max(0.0, (growth_vel / pop_vel) / 5.0))
+
+        return {
+            **data,
+            "insight": dynamic_insight,
+            "intelligence_score": round(intelligence_score, 2)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/aoi", response_model=AOIDb)
+async def save_aoi(aoi: AOISave):
+    """
+    SECTION 3: AOI SAVE FEATURE
+    """
+    aoi_id = str(uuid.uuid4())
+    new_aoi = AOIDb(
+        **aoi.dict(),
+        id=aoi_id,
+        created_at=datetime.now()
+    )
+    aoi_db[aoi_id] = new_aoi
+    return new_aoi
+
+@app.get("/api/v1/aoi", response_model=List[AOIDb])
+async def list_aois():
+    return list(aoi_db.values())
+
+@app.get("/api/v1/health")
+async def health_check():
+    return {"status": "healthy"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+</file>
+
+<file path="backend/.env">
+COPERNICUS_API_KEY=your_key_here
+WORLDPOP_API_KEY=your_key_here
+DATABASE_URL=postgresql://user:password@localhost/urban_growth
+DEBUG=True
+</file>
+
+<file path="backend/README.md">
+# Urban Growth Time Machine - Backend
+
+## Overview
+FastAPI backend for the PoC #28. Detects urban growth velocity using satellite imagery and population data.
+
+## Protocol Adherence
+- **Step 1**: Backend first implementation.
+- **Mock Fallback**: Integrated `generator.py` for v1/offline development.
+- **Output**: Structured JSON/GeoJSON for spatiotemporal insights.
+
+## Setup
+1. Create virtual env: `python -m venv venv`
+2. Activate: `source venv/bin/activate`
+3. Install: `pip install -r requirements.txt`
+4. Run: `uvicorn app.main:app --reload`
+
+## API Endpoints
+- `GET /api/v1/growth/{aoi_id}`: Returns growth metrics and insights.
+- `GET /api/v1/health`: System status.
+</file>
+
+<file path="backend/requirements.txt">
+fastapi
+uvicorn
+pandas
+geopandas
+pydantic
+python-dotenv
+numpy
+rasterio
+shapely
+</file>
+
+<file path="frontend/.git/hooks/applypatch-msg.sample">
+#!/bin/sh
+#
+# An example hook script to check the commit log message taken by
+# applypatch from an e-mail message.
+#
+# The hook should exit with non-zero status after issuing an
+# appropriate message if it wants to stop the commit.  The hook is
+# allowed to edit the commit message file.
+#
+# To enable this hook, rename this file to "applypatch-msg".
+
+. git-sh-setup
+commitmsg="$(git rev-parse --git-path hooks/commit-msg)"
+test -x "$commitmsg" && exec "$commitmsg" ${1+"$@"}
+:
+</file>
+
+<file path="frontend/.git/hooks/commit-msg.sample">
+#!/bin/sh
+#
+# An example hook script to check the commit log message.
+# Called by "git commit" with one argument, the name of the file
+# that has the commit message.  The hook should exit with non-zero
+# status after issuing an appropriate message if it wants to stop the
+# commit.  The hook is allowed to edit the commit message file.
+#
+# To enable this hook, rename this file to "commit-msg".
+
+# Uncomment the below to add a Signed-off-by line to the message.
+# Doing this in a hook is a bad idea in general, but the prepare-commit-msg
+# hook is more suited to it.
+#
+# SOB=$(git var GIT_AUTHOR_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
+# grep -qs "^$SOB" "$1" || echo "$SOB" >> "$1"
+
+# This example catches duplicate Signed-off-by lines.
+
+test "" = "$(grep '^Signed-off-by: ' "$1" |
+	 sort | uniq -c | sed -e '/^[ 	]*1[ 	]/d')" || {
+	echo >&2 Duplicate Signed-off-by lines.
+	exit 1
+}
+</file>
+
+<file path="frontend/.git/hooks/fsmonitor-watchman.sample">
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use IPC::Open2;
+
+# An example hook script to integrate Watchman
+# (https://facebook.github.io/watchman/) with git to speed up detecting
+# new and modified files.
+#
+# The hook is passed a version (currently 2) and last update token
+# formatted as a string and outputs to stdout a new update token and
+# all files that have been modified since the update token. Paths must
+# be relative to the root of the working tree and separated by a single NUL.
+#
+# To enable this hook, rename this file to "query-watchman" and set
+# 'git config core.fsmonitor .git/hooks/query-watchman'
+#
+my ($version, $last_update_token) = @ARGV;
+
+# Uncomment for debugging
+# print STDERR "$0 $version $last_update_token\n";
+
+# Check the hook interface version
+if ($version ne 2) {
+	die "Unsupported query-fsmonitor hook version '$version'.\n" .
+	    "Falling back to scanning...\n";
+}
+
+my $git_work_tree = get_working_dir();
+
+my $retry = 1;
+
+my $json_pkg;
+eval {
+	require JSON::XS;
+	$json_pkg = "JSON::XS";
+	1;
+} or do {
+	require JSON::PP;
+	$json_pkg = "JSON::PP";
+};
+
+launch_watchman();
+
+sub launch_watchman {
+	my $o = watchman_query();
+	if (is_work_tree_watched($o)) {
+		output_result($o->{clock}, @{$o->{files}});
+	}
+}
+
+sub output_result {
+	my ($clockid, @files) = @_;
+
+	# Uncomment for debugging watchman output
+	# open (my $fh, ">", ".git/watchman-output.out");
+	# binmode $fh, ":utf8";
+	# print $fh "$clockid\n@files\n";
+	# close $fh;
+
+	binmode STDOUT, ":utf8";
+	print $clockid;
+	print "\0";
+	local $, = "\0";
+	print @files;
+}
+
+sub watchman_clock {
+	my $response = qx/watchman clock "$git_work_tree"/;
+	die "Failed to get clock id on '$git_work_tree'.\n" .
+		"Falling back to scanning...\n" if $? != 0;
+
+	return $json_pkg->new->utf8->decode($response);
+}
+
+sub watchman_query {
+	my $pid = open2(\*CHLD_OUT, \*CHLD_IN, 'watchman -j --no-pretty')
+	or die "open2() failed: $!\n" .
+	"Falling back to scanning...\n";
+
+	# In the query expression below we're asking for names of files that
+	# changed since $last_update_token but not from the .git folder.
+	#
+	# To accomplish this, we're using the "since" generator to use the
+	# recency index to select candidate nodes and "fields" to limit the
+	# output to file names only. Then we're using the "expression" term to
+	# further constrain the results.
+	my $last_update_line = "";
+	if (substr($last_update_token, 0, 1) eq "c") {
+		$last_update_token = "\"$last_update_token\"";
+		$last_update_line = qq[\n"since": $last_update_token,];
+	}
+	my $query = <<"	END";
+		["query", "$git_work_tree", {$last_update_line
+			"fields": ["name"],
+			"expression": ["not", ["dirname", ".git"]]
+		}]
+	END
+
+	# Uncomment for debugging the watchman query
+	# open (my $fh, ">", ".git/watchman-query.json");
+	# print $fh $query;
+	# close $fh;
+
+	print CHLD_IN $query;
+	close CHLD_IN;
+	my $response = do {local $/; <CHLD_OUT>};
+
+	# Uncomment for debugging the watch response
+	# open ($fh, ">", ".git/watchman-response.json");
+	# print $fh $response;
+	# close $fh;
+
+	die "Watchman: command returned no output.\n" .
+	"Falling back to scanning...\n" if $response eq "";
+	die "Watchman: command returned invalid output: $response\n" .
+	"Falling back to scanning...\n" unless $response =~ /^\{/;
+
+	return $json_pkg->new->utf8->decode($response);
+}
+
+sub is_work_tree_watched {
+	my ($output) = @_;
+	my $error = $output->{error};
+	if ($retry > 0 and $error and $error =~ m/unable to resolve root .* directory (.*) is not watched/) {
+		$retry--;
+		my $response = qx/watchman watch "$git_work_tree"/;
+		die "Failed to make watchman watch '$git_work_tree'.\n" .
+		    "Falling back to scanning...\n" if $? != 0;
+		$output = $json_pkg->new->utf8->decode($response);
+		$error = $output->{error};
+		die "Watchman: $error.\n" .
+		"Falling back to scanning...\n" if $error;
+
+		# Uncomment for debugging watchman output
+		# open (my $fh, ">", ".git/watchman-output.out");
+		# close $fh;
+
+		# Watchman will always return all files on the first query so
+		# return the fast "everything is dirty" flag to git and do the
+		# Watchman query just to get it over with now so we won't pay
+		# the cost in git to look up each individual file.
+		my $o = watchman_clock();
+		$error = $output->{error};
+
+		die "Watchman: $error.\n" .
+		"Falling back to scanning...\n" if $error;
+
+		output_result($o->{clock}, ("/"));
+		$last_update_token = $o->{clock};
+
+		eval { launch_watchman() };
+		return 0;
+	}
+
+	die "Watchman: $error.\n" .
+	"Falling back to scanning...\n" if $error;
+
+	return 1;
+}
+
+sub get_working_dir {
+	my $working_dir;
+	if ($^O =~ 'msys' || $^O =~ 'cygwin') {
+		$working_dir = Win32::GetCwd();
+		$working_dir =~ tr/\\/\//;
+	} else {
+		require Cwd;
+		$working_dir = Cwd::cwd();
+	}
+
+	return $working_dir;
+}
+</file>
+
+<file path="frontend/.git/hooks/post-update.sample">
+#!/bin/sh
+#
+# An example hook script to prepare a packed repository for use over
+# dumb transports.
+#
+# To enable this hook, rename this file to "post-update".
+
+exec git update-server-info
+</file>
+
+<file path="frontend/.git/hooks/pre-applypatch.sample">
+#!/bin/sh
+#
+# An example hook script to verify what is about to be committed
+# by applypatch from an e-mail message.
+#
+# The hook should exit with non-zero status after issuing an
+# appropriate message if it wants to stop the commit.
+#
+# To enable this hook, rename this file to "pre-applypatch".
+
+. git-sh-setup
+precommit="$(git rev-parse --git-path hooks/pre-commit)"
+test -x "$precommit" && exec "$precommit" ${1+"$@"}
+:
+</file>
+
+<file path="frontend/.git/hooks/pre-commit.sample">
+#!/bin/sh
+#
+# An example hook script to verify what is about to be committed.
+# Called by "git commit" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message if
+# it wants to stop the commit.
+#
+# To enable this hook, rename this file to "pre-commit".
+
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+	against=HEAD
+else
+	# Initial commit: diff against an empty tree object
+	against=$(git hash-object -t tree /dev/null)
+fi
+
+# If you want to allow non-ASCII filenames set this variable to true.
+allownonascii=$(git config --type=bool hooks.allownonascii)
+
+# Redirect output to stderr.
+exec 1>&2
+
+# Cross platform projects tend to avoid non-ASCII filenames; prevent
+# them from being added to the repository. We exploit the fact that the
+# printable range starts at the space character and ends with tilde.
+if [ "$allownonascii" != "true" ] &&
+	# Note that the use of brackets around a tr range is ok here, (it's
+	# even required, for portability to Solaris 10's /usr/bin/tr), since
+	# the square bracket bytes happen to fall in the designated range.
+	test $(git diff-index --cached --name-only --diff-filter=A -z $against |
+	  LC_ALL=C tr -d '[ -~]\0' | wc -c) != 0
+then
+	cat <<\EOF
+Error: Attempt to add a non-ASCII file name.
+
+This can cause problems if you want to work with people on other platforms.
+
+To be portable it is advisable to rename the file.
+
+If you know what you are doing you can disable this check using:
+
+  git config hooks.allownonascii true
+EOF
+	exit 1
+fi
+
+# If there are whitespace errors, print the offending file names and fail.
+exec git diff-index --check --cached $against --
+</file>
+
+<file path="frontend/.git/hooks/pre-merge-commit.sample">
+#!/bin/sh
+#
+# An example hook script to verify what is about to be committed.
+# Called by "git merge" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message to
+# stderr if it wants to stop the merge commit.
+#
+# To enable this hook, rename this file to "pre-merge-commit".
+
+. git-sh-setup
+test -x "$GIT_DIR/hooks/pre-commit" &&
+        exec "$GIT_DIR/hooks/pre-commit"
+:
+</file>
+
+<file path="frontend/.git/hooks/pre-push.sample">
+#!/bin/sh
+
+# An example hook script to verify what is about to be pushed.  Called by "git
+# push" after it has checked the remote status, but before anything has been
+# pushed.  If this script exits with a non-zero status nothing will be pushed.
+#
+# This hook is called with the following parameters:
+#
+# $1 -- Name of the remote to which the push is being done
+# $2 -- URL to which the push is being done
+#
+# If pushing without using a named remote those arguments will be equal.
+#
+# Information about the commits which are being pushed is supplied as lines to
+# the standard input in the form:
+#
+#   <local ref> <local oid> <remote ref> <remote oid>
+#
+# This sample shows how to prevent push of commits where the log message starts
+# with "WIP" (work in progress).
+
+remote="$1"
+url="$2"
+
+zero=$(git hash-object --stdin </dev/null | tr '[0-9a-f]' '0')
+
+while read local_ref local_oid remote_ref remote_oid
+do
+	if test "$local_oid" = "$zero"
+	then
+		# Handle delete
+		:
+	else
+		if test "$remote_oid" = "$zero"
+		then
+			# New branch, examine all commits
+			range="$local_oid"
+		else
+			# Update to existing branch, examine new commits
+			range="$remote_oid..$local_oid"
+		fi
+
+		# Check for WIP commit
+		commit=$(git rev-list -n 1 --grep '^WIP' "$range")
+		if test -n "$commit"
+		then
+			echo >&2 "Found WIP commit in $local_ref, not pushing"
+			exit 1
+		fi
+	fi
+done
+
+exit 0
+</file>
+
+<file path="frontend/.git/hooks/pre-rebase.sample">
+#!/bin/sh
+#
+# Copyright (c) 2006, 2008 Junio C Hamano
+#
+# The "pre-rebase" hook is run just before "git rebase" starts doing
+# its job, and can prevent the command from running by exiting with
+# non-zero status.
+#
+# The hook is called with the following parameters:
+#
+# $1 -- the upstream the series was forked from.
+# $2 -- the branch being rebased (or empty when rebasing the current branch).
+#
+# This sample shows how to prevent topic branches that are already
+# merged to 'next' branch from getting rebased, because allowing it
+# would result in rebasing already published history.
+
+publish=next
+basebranch="$1"
+if test "$#" = 2
+then
+	topic="refs/heads/$2"
+else
+	topic=`git symbolic-ref HEAD` ||
+	exit 0 ;# we do not interrupt rebasing detached HEAD
+fi
+
+case "$topic" in
+refs/heads/??/*)
+	;;
+*)
+	exit 0 ;# we do not interrupt others.
+	;;
+esac
+
+# Now we are dealing with a topic branch being rebased
+# on top of master.  Is it OK to rebase it?
+
+# Does the topic really exist?
+git show-ref -q "$topic" || {
+	echo >&2 "No such branch $topic"
+	exit 1
+}
+
+# Is topic fully merged to master?
+not_in_master=`git rev-list --pretty=oneline ^master "$topic"`
+if test -z "$not_in_master"
+then
+	echo >&2 "$topic is fully merged to master; better remove it."
+	exit 1 ;# we could allow it, but there is no point.
+fi
+
+# Is topic ever merged to next?  If so you should not be rebasing it.
+only_next_1=`git rev-list ^master "^$topic" ${publish} | sort`
+only_next_2=`git rev-list ^master           ${publish} | sort`
+if test "$only_next_1" = "$only_next_2"
+then
+	not_in_topic=`git rev-list "^$topic" master`
+	if test -z "$not_in_topic"
+	then
+		echo >&2 "$topic is already up to date with master"
+		exit 1 ;# we could allow it, but there is no point.
+	else
+		exit 0
+	fi
+else
+	not_in_next=`git rev-list --pretty=oneline ^${publish} "$topic"`
+	/usr/bin/perl -e '
+		my $topic = $ARGV[0];
+		my $msg = "* $topic has commits already merged to public branch:\n";
+		my (%not_in_next) = map {
+			/^([0-9a-f]+) /;
+			($1 => 1);
+		} split(/\n/, $ARGV[1]);
+		for my $elem (map {
+				/^([0-9a-f]+) (.*)$/;
+				[$1 => $2];
+			} split(/\n/, $ARGV[2])) {
+			if (!exists $not_in_next{$elem->[0]}) {
+				if ($msg) {
+					print STDERR $msg;
+					undef $msg;
+				}
+				print STDERR " $elem->[1]\n";
+			}
+		}
+	' "$topic" "$not_in_next" "$not_in_master"
+	exit 1
+fi
+
+<<\DOC_END
+
+This sample hook safeguards topic branches that have been
+published from being rewound.
+
+The workflow assumed here is:
+
+ * Once a topic branch forks from "master", "master" is never
+   merged into it again (either directly or indirectly).
+
+ * Once a topic branch is fully cooked and merged into "master",
+   it is deleted.  If you need to build on top of it to correct
+   earlier mistakes, a new topic branch is created by forking at
+   the tip of the "master".  This is not strictly necessary, but
+   it makes it easier to keep your history simple.
+
+ * Whenever you need to test or publish your changes to topic
+   branches, merge them into "next" branch.
+
+The script, being an example, hardcodes the publish branch name
+to be "next", but it is trivial to make it configurable via
+$GIT_DIR/config mechanism.
+
+With this workflow, you would want to know:
+
+(1) ... if a topic branch has ever been merged to "next".  Young
+    topic branches can have stupid mistakes you would rather
+    clean up before publishing, and things that have not been
+    merged into other branches can be easily rebased without
+    affecting other people.  But once it is published, you would
+    not want to rewind it.
+
+(2) ... if a topic branch has been fully merged to "master".
+    Then you can delete it.  More importantly, you should not
+    build on top of it -- other people may already want to
+    change things related to the topic as patches against your
+    "master", so if you need further changes, it is better to
+    fork the topic (perhaps with the same name) afresh from the
+    tip of "master".
+
+Let's look at this example:
+
+		   o---o---o---o---o---o---o---o---o---o "next"
+		  /       /           /           /
+		 /   a---a---b A     /           /
+		/   /               /           /
+	       /   /   c---c---c---c B         /
+	      /   /   /             \         /
+	     /   /   /   b---b C     \       /
+	    /   /   /   /             \     /
+    ---o---o---o---o---o---o---o---o---o---o---o "master"
+
+
+A, B and C are topic branches.
+
+ * A has one fix since it was merged up to "next".
+
+ * B has finished.  It has been fully merged up to "master" and "next",
+   and is ready to be deleted.
+
+ * C has not merged to "next" at all.
+
+We would want to allow C to be rebased, refuse A, and encourage
+B to be deleted.
+
+To compute (1):
+
+	git rev-list ^master ^topic next
+	git rev-list ^master        next
+
+	if these match, topic has not merged in next at all.
+
+To compute (2):
+
+	git rev-list master..topic
+
+	if this is empty, it is fully merged to "master".
+
+DOC_END
+</file>
+
+<file path="frontend/.git/hooks/pre-receive.sample">
+#!/bin/sh
+#
+# An example hook script to make use of push options.
+# The example simply echoes all push options that start with 'echoback='
+# and rejects all pushes when the "reject" push option is used.
+#
+# To enable this hook, rename this file to "pre-receive".
+
+if test -n "$GIT_PUSH_OPTION_COUNT"
+then
+	i=0
+	while test "$i" -lt "$GIT_PUSH_OPTION_COUNT"
+	do
+		eval "value=\$GIT_PUSH_OPTION_$i"
+		case "$value" in
+		echoback=*)
+			echo "echo from the pre-receive-hook: ${value#*=}" >&2
+			;;
+		reject)
+			exit 1
+		esac
+		i=$((i + 1))
+	done
+fi
+</file>
+
+<file path="frontend/.git/hooks/prepare-commit-msg.sample">
+#!/bin/sh
+#
+# An example hook script to prepare the commit log message.
+# Called by "git commit" with the name of the file that has the
+# commit message, followed by the description of the commit
+# message's source.  The hook's purpose is to edit the commit
+# message file.  If the hook fails with a non-zero status,
+# the commit is aborted.
+#
+# To enable this hook, rename this file to "prepare-commit-msg".
+
+# This hook includes three examples. The first one removes the
+# "# Please enter the commit message..." help message.
+#
+# The second includes the output of "git diff --name-status -r"
+# into the message, just before the "git status" output.  It is
+# commented because it doesn't cope with --amend or with squashed
+# commits.
+#
+# The third example adds a Signed-off-by line to the message, that can
+# still be edited.  This is rarely a good idea.
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+SHA1=$3
+
+/usr/bin/perl -i.bak -ne 'print unless(m/^. Please enter the commit message/..m/^#$/)' "$COMMIT_MSG_FILE"
+
+# case "$COMMIT_SOURCE,$SHA1" in
+#  ,|template,)
+#    /usr/bin/perl -i.bak -pe '
+#       print "\n" . `git diff --cached --name-status -r`
+# 	 if /^#/ && $first++ == 0' "$COMMIT_MSG_FILE" ;;
+#  *) ;;
+# esac
+
+# SOB=$(git var GIT_COMMITTER_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
+# git interpret-trailers --in-place --trailer "$SOB" "$COMMIT_MSG_FILE"
+# if test -z "$COMMIT_SOURCE"
+# then
+#   /usr/bin/perl -i.bak -pe 'print "\n" if !$first_line++' "$COMMIT_MSG_FILE"
+# fi
+</file>
+
+<file path="frontend/.git/hooks/push-to-checkout.sample">
+#!/bin/sh
+
+# An example hook script to update a checked-out tree on a git push.
+#
+# This hook is invoked by git-receive-pack(1) when it reacts to git
+# push and updates reference(s) in its repository, and when the push
+# tries to update the branch that is currently checked out and the
+# receive.denyCurrentBranch configuration variable is set to
+# updateInstead.
+#
+# By default, such a push is refused if the working tree and the index
+# of the remote repository has any difference from the currently
+# checked out commit; when both the working tree and the index match
+# the current commit, they are updated to match the newly pushed tip
+# of the branch. This hook is to be used to override the default
+# behaviour; however the code below reimplements the default behaviour
+# as a starting point for convenient modification.
+#
+# The hook receives the commit with which the tip of the current
+# branch is going to be updated:
+commit=$1
+
+# It can exit with a non-zero status to refuse the push (when it does
+# so, it must not modify the index or the working tree).
+die () {
+	echo >&2 "$*"
+	exit 1
+}
+
+# Or it can make any necessary changes to the working tree and to the
+# index to bring them to the desired state when the tip of the current
+# branch is updated to the new commit, and exit with a zero status.
+#
+# For example, the hook can simply run git read-tree -u -m HEAD "$1"
+# in order to emulate git fetch that is run in the reverse direction
+# with git push, as the two-tree form of git read-tree -u -m is
+# essentially the same as git switch or git checkout that switches
+# branches while keeping the local changes in the working tree that do
+# not interfere with the difference between the branches.
+
+# The below is a more-or-less exact translation to shell of the C code
+# for the default behaviour for git's push-to-checkout hook defined in
+# the push_to_deploy() function in builtin/receive-pack.c.
+#
+# Note that the hook will be executed from the repository directory,
+# not from the working tree, so if you want to perform operations on
+# the working tree, you will have to adapt your code accordingly, e.g.
+# by adding "cd .." or using relative paths.
+
+if ! git update-index -q --ignore-submodules --refresh
+then
+	die "Up-to-date check failed"
+fi
+
+if ! git diff-files --quiet --ignore-submodules --
+then
+	die "Working directory has unstaged changes"
+fi
+
+# This is a rough translation of:
+#
+#   head_has_history() ? "HEAD" : EMPTY_TREE_SHA1_HEX
+if git cat-file -e HEAD 2>/dev/null
+then
+	head=HEAD
+else
+	head=$(git hash-object -t tree --stdin </dev/null)
+fi
+
+if ! git diff-index --quiet --cached --ignore-submodules $head --
+then
+	die "Working directory has staged changes"
+fi
+
+if ! git read-tree -u -m "$commit"
+then
+	die "Could not update working tree to new HEAD"
+fi
+</file>
+
+<file path="frontend/.git/hooks/sendemail-validate.sample">
+#!/bin/sh
+
+# An example hook script to validate a patch (and/or patch series) before
+# sending it via email.
+#
+# The hook should exit with non-zero status after issuing an appropriate
+# message if it wants to prevent the email(s) from being sent.
+#
+# To enable this hook, rename this file to "sendemail-validate".
+#
+# By default, it will only check that the patch(es) can be applied on top of
+# the default upstream branch without conflicts in a secondary worktree. After
+# validation (successful or not) of the last patch of a series, the worktree
+# will be deleted.
+#
+# The following config variables can be set to change the default remote and
+# remote ref that are used to apply the patches against:
+#
+#   sendemail.validateRemote (default: origin)
+#   sendemail.validateRemoteRef (default: HEAD)
+#
+# Replace the TODO placeholders with appropriate checks according to your
+# needs.
+
+validate_cover_letter () {
+	file="$1"
+	# TODO: Replace with appropriate checks (e.g. spell checking).
+	true
+}
+
+validate_patch () {
+	file="$1"
+	# Ensure that the patch applies without conflicts.
+	git am -3 "$file" || return
+	# TODO: Replace with appropriate checks for this patch
+	# (e.g. checkpatch.pl).
+	true
+}
+
+validate_series () {
+	# TODO: Replace with appropriate checks for the whole series
+	# (e.g. quick build, coding style checks, etc.).
+	true
+}
+
+# main -------------------------------------------------------------------------
+
+if test "$GIT_SENDEMAIL_FILE_COUNTER" = 1
+then
+	remote=$(git config --default origin --get sendemail.validateRemote) &&
+	ref=$(git config --default HEAD --get sendemail.validateRemoteRef) &&
+	worktree=$(mktemp --tmpdir -d sendemail-validate.XXXXXXX) &&
+	git worktree add -fd --checkout "$worktree" "refs/remotes/$remote/$ref" &&
+	git config --replace-all sendemail.validateWorktree "$worktree"
+else
+	worktree=$(git config --get sendemail.validateWorktree)
+fi || {
+	echo "sendemail-validate: error: failed to prepare worktree" >&2
+	exit 1
+}
+
+unset GIT_DIR GIT_WORK_TREE
+cd "$worktree" &&
+
+if grep -q "^diff --git " "$1"
+then
+	validate_patch "$1"
+else
+	validate_cover_letter "$1"
+fi &&
+
+if test "$GIT_SENDEMAIL_FILE_COUNTER" = "$GIT_SENDEMAIL_FILE_TOTAL"
+then
+	git config --unset-all sendemail.validateWorktree &&
+	trap 'git worktree remove -ff "$worktree"' EXIT &&
+	validate_series
+fi
+</file>
+
+<file path="frontend/.git/hooks/update.sample">
+#!/bin/sh
+#
+# An example hook script to block unannotated tags from entering.
+# Called by "git receive-pack" with arguments: refname sha1-old sha1-new
+#
+# To enable this hook, rename this file to "update".
+#
+# Config
+# ------
+# hooks.allowunannotated
+#   This boolean sets whether unannotated tags will be allowed into the
+#   repository.  By default they won't be.
+# hooks.allowdeletetag
+#   This boolean sets whether deleting tags will be allowed in the
+#   repository.  By default they won't be.
+# hooks.allowmodifytag
+#   This boolean sets whether a tag may be modified after creation. By default
+#   it won't be.
+# hooks.allowdeletebranch
+#   This boolean sets whether deleting branches will be allowed in the
+#   repository.  By default they won't be.
+# hooks.denycreatebranch
+#   This boolean sets whether remotely creating branches will be denied
+#   in the repository.  By default this is allowed.
+#
+
+# --- Command line
+refname="$1"
+oldrev="$2"
+newrev="$3"
+
+# --- Safety check
+if [ -z "$GIT_DIR" ]; then
+	echo "Don't run this script from the command line." >&2
+	echo " (if you want, you could supply GIT_DIR then run" >&2
+	echo "  $0 <ref> <oldrev> <newrev>)" >&2
+	exit 1
+fi
+
+if [ -z "$refname" -o -z "$oldrev" -o -z "$newrev" ]; then
+	echo "usage: $0 <ref> <oldrev> <newrev>" >&2
+	exit 1
+fi
+
+# --- Config
+allowunannotated=$(git config --type=bool hooks.allowunannotated)
+allowdeletebranch=$(git config --type=bool hooks.allowdeletebranch)
+denycreatebranch=$(git config --type=bool hooks.denycreatebranch)
+allowdeletetag=$(git config --type=bool hooks.allowdeletetag)
+allowmodifytag=$(git config --type=bool hooks.allowmodifytag)
+
+# check for no description
+projectdesc=$(sed -e '1q' "$GIT_DIR/description")
+case "$projectdesc" in
+"Unnamed repository"* | "")
+	echo "*** Project description file hasn't been set" >&2
+	exit 1
+	;;
+esac
+
+# --- Check types
+# if $newrev is 0000...0000, it's a commit to delete a ref.
+zero=$(git hash-object --stdin </dev/null | tr '[0-9a-f]' '0')
+if [ "$newrev" = "$zero" ]; then
+	newrev_type=delete
+else
+	newrev_type=$(git cat-file -t $newrev)
+fi
+
+case "$refname","$newrev_type" in
+	refs/tags/*,commit)
+		# un-annotated tag
+		short_refname=${refname##refs/tags/}
+		if [ "$allowunannotated" != "true" ]; then
+			echo "*** The un-annotated tag, $short_refname, is not allowed in this repository" >&2
+			echo "*** Use 'git tag [ -a | -s ]' for tags you want to propagate." >&2
+			exit 1
+		fi
+		;;
+	refs/tags/*,delete)
+		# delete tag
+		if [ "$allowdeletetag" != "true" ]; then
+			echo "*** Deleting a tag is not allowed in this repository" >&2
+			exit 1
+		fi
+		;;
+	refs/tags/*,tag)
+		# annotated tag
+		if [ "$allowmodifytag" != "true" ] && git rev-parse $refname > /dev/null 2>&1
+		then
+			echo "*** Tag '$refname' already exists." >&2
+			echo "*** Modifying a tag is not allowed in this repository." >&2
+			exit 1
+		fi
+		;;
+	refs/heads/*,commit)
+		# branch
+		if [ "$oldrev" = "$zero" -a "$denycreatebranch" = "true" ]; then
+			echo "*** Creating a branch is not allowed in this repository" >&2
+			exit 1
+		fi
+		;;
+	refs/heads/*,delete)
+		# delete branch
+		if [ "$allowdeletebranch" != "true" ]; then
+			echo "*** Deleting a branch is not allowed in this repository" >&2
+			exit 1
+		fi
+		;;
+	refs/remotes/*,commit)
+		# tracking branch
+		;;
+	refs/remotes/*,delete)
+		# delete tracking branch
+		if [ "$allowdeletebranch" != "true" ]; then
+			echo "*** Deleting a tracking branch is not allowed in this repository" >&2
+			exit 1
+		fi
+		;;
+	*)
+		# Anything else (is there anything else?)
+		echo "*** Update hook: unknown type of update to ref $refname of type $newrev_type" >&2
+		exit 1
+		;;
+esac
+
+# --- Finished
+exit 0
+</file>
+
+<file path="frontend/.git/info/exclude">
+# git ls-files --others --exclude-from=.git/info/exclude
+# Lines that start with '#' are comments.
+# For a project mostly in C, the following would be a good set of
+# exclude patterns (uncomment them if you want to use them):
+# *.[oa]
+# *~
+</file>
+
+<file path="frontend/.git/logs/refs/heads/main">
+0000000000000000000000000000000000000000 11940fd7840a136dedb0054a69d69df6dbd3adcb Ananthu Anil <ananthuanil7510@gmail.com> 1777275914 +0530	commit (initial): Initial commit from Create Next App
+</file>
+
+<file path="frontend/.git/logs/HEAD">
+0000000000000000000000000000000000000000 11940fd7840a136dedb0054a69d69df6dbd3adcb Ananthu Anil <ananthuanil7510@gmail.com> 1777275914 +0530	commit (initial): Initial commit from Create Next App
+</file>
+
+<file path="frontend/.git/refs/heads/main">
+11940fd7840a136dedb0054a69d69df6dbd3adcb
+</file>
+
+<file path="frontend/.git/COMMIT_EDITMSG">
+Initial commit from Create Next App
+</file>
+
+<file path="frontend/.git/config">
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+	ignorecase = true
+	precomposeunicode = true
+</file>
+
+<file path="frontend/.git/description">
+Unnamed repository; edit this file 'description' to name the repository.
+</file>
+
+<file path="frontend/.git/HEAD">
+ref: refs/heads/main
+</file>
+
+<file path="frontend/public/file.svg">
+<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
+</file>
+
+<file path="frontend/public/globe.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
+</file>
+
+<file path="frontend/public/mock_data.json">
+{
+  "aoi_id": "fallback_mock",
+  "time_window": "2018-2023",
+  "metrics": [
+    { "year": 2018, "built_up_area_sqkm": 50.0, "population_density": 1200.0, "growth_velocity_pct": 0.0 },
+    { "year": 2023, "built_up_area_sqkm": 65.5, "population_density": 1850.0, "growth_velocity_pct": 31.0 }
+  ],
+  "geojson_url": "/mock/growth_boundary.json",
+  "insight": "GUARDRAIL_FALLBACK: API connection failed. Showing cached spatiotemporal intelligence.",
+  "intelligence_score": 0.85
+}
+</file>
+
+<file path="frontend/public/next.svg">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
+</file>
+
+<file path="frontend/public/vercel.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 1000"><path d="m577.3 0 577.4 1000H0z" fill="#fff"/></svg>
+</file>
+
+<file path="frontend/public/window.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
+</file>
+
+<file path="frontend/src/app/globals.css">
+@import "tailwindcss";
+
+:root {
+  --background: #030712;
+  --foreground: #F8FAFC;
+  --surface: #0B1117;
+  --accent-primary: #38BDF8;
+  --accent-secondary: #818CF8;
+  --border: #1F2937;
+  --card-glow: rgba(56, 189, 248, 0.1);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-border-custom: var(--border);
+  --font-sans: var(--font-geist-sans), Inter, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans);
+  overflow-x: hidden;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(11, 17, 23, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.cyan-glow {
+  box-shadow: 0 0 15px var(--card-glow);
+}
+
+/* 2-Column System Layout */
+.main-stage {
+  width: 70%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 30%;
+  height: 100vh;
+  border-left: 1px solid var(--border);
+  background: #060a14;
+}
+
+.ticker-container {
+  width: 100%;
+  height: 30px;
+  background: rgba(3, 7, 18, 0.9);
+  border-top: 1px solid var(--border);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.ticker-text {
+  white-space: nowrap;
+  animation: ticker 30s linear infinite;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #64748b;
+  letter-spacing: 0.1em;
+}
+
+@keyframes ticker {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.metric-card {
+  background: #0B1117;
+  border: 1px solid #1F2937;
+  padding: 16px;
+  border-radius: 4px;
+}
+</file>
+
+<file path="frontend/src/app/layout.tsx">
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Create Next App",
+  description: "Generated by create next app",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">{children}</body>
+    </html>
+  );
+}
+</file>
+
+<file path="frontend/src/app/page.tsx">
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { fetchGrowthMetrics, saveAOI } from '@/lib/api';
+
+const MapComponent = dynamic(() => import('@/components/MapComponent'), { 
+  ssr: false,
+  loading: () => <div className="w-full h-full bg-[#030712] animate-pulse flex items-center justify-center font-mono text-[10px] text-slate-700">INITIALIZING_SPATIAL_ENGINE...</div>
+});
+
+export default function Dashboard() {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState('ALL_RAILS');
+  const [activeTab, setActiveTab] = useState('SCHEMES');
+  const [mapMode, setMapMode] = useState<'BEFORE' | 'AFTER'>('AFTER');
+  const [saveStatus, setSaveStatus] = useState<'IDLE' | 'SAVING' | 'SAVED'>('IDLE');
+
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      const result = await fetchGrowthMetrics(activeFilter.toLowerCase());
+      setData(result);
+      setLoading(false);
+    }
+    loadData();
+  }, [activeFilter]);
+
+  const handleSaveSnapshot = async () => {
+    setSaveStatus('SAVING');
+    await saveAOI({
+      name: `Snapshot_${activeFilter}`,
+      latitude: 12.9716,
+      longitude: 77.5946,
+      zoom: 13,
+      user_id: 'internship_user_01'
+    });
+    setSaveStatus('SAVED');
+    setTimeout(() => setSaveStatus('IDLE'), 2000);
+  };
+
+  const latestMetric = data?.metrics?.[data.metrics.length - 1];
+
+  return (
+    <main className="flex min-h-screen bg-[#030712] text-foreground font-sans overflow-hidden">
+      
+      {/* SECTION 1: MAIN STAGE (70%) */}
+      <section className="main-stage h-screen w-[70vw] relative border-r border-[#1F2937]">
+        <div className="absolute inset-0 z-0">
+          <MapComponent filter={activeFilter} mode={mapMode} />
+        </div>
+
+        {/* Branding Overlay */}
+        <div className="absolute top-8 left-8 z-20 space-y-4">
+          <div className="space-y-1">
+            <h1 className="text-[10px] font-mono tracking-[0.3em] text-accent-primary uppercase opacity-70">Real Rails Intelligence Library</h1>
+            <h2 className="text-3xl font-bold text-white tracking-tight">Urban Growth <span className="text-accent-primary">Time Machine</span></h2>
+          </div>
+          
+          <div className="flex space-x-2">
+            {['ALL_RAILS', 'LIVE', 'PILOT', 'PLANNED'].map((filter) => (
+              <button 
+                key={filter} 
+                onClick={() => setActiveFilter(filter)}
+                className={`px-4 py-1.5 text-[10px] font-mono border transition-all ${
+                  activeFilter === filter 
+                    ? 'border-accent-primary text-accent-primary bg-accent-primary/10 shadow-[0_0_10px_rgba(56,189,248,0.2)]' 
+                    : 'border-border-custom text-slate-500 hover:border-slate-400 hover:text-slate-300'
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Before/After Slider Control */}
+        <div className="absolute top-8 right-8 z-20 glass-panel p-1 rounded-full flex items-center border-[#1F2937] bg-black/50">
+           <button 
+             onClick={() => setMapMode('BEFORE')}
+             className={`px-4 py-1 rounded-full text-[9px] font-mono transition-all ${mapMode === 'BEFORE' ? 'bg-accent-primary text-black' : 'text-slate-500'}`}
+           >
+             2018_BASE
+           </button>
+           <button 
+             onClick={() => setMapMode('AFTER')}
+             className={`px-4 py-1 rounded-full text-[9px] font-mono transition-all ${mapMode === 'AFTER' ? 'bg-accent-primary text-black' : 'text-slate-500'}`}
+           >
+             2023_CURRENT
+           </button>
+        </div>
+
+        {/* Legend Overlay */}
+        <div className="absolute bottom-12 left-8 z-20 glass-panel p-4 rounded border-[#1F2937] w-48 bg-black/40">
+           <h4 className="text-[9px] font-mono text-slate-500 uppercase mb-3 tracking-widest">Growth Status</h4>
+           <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 rounded-full bg-[#10b981] shadow-[0_0_8px_#10b981]"></div>
+                <span className="text-[10px] font-mono text-slate-300">Natural</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 rounded-full bg-[#38bdf8] shadow-[0_0_8px_#38bdf8]"></div>
+                <span className="text-[10px] font-mono text-slate-300">Urban_Expansion</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 rounded-full bg-[#f59e0b] shadow-[0_0_8px_#f59e0b]"></div>
+                <span className="text-[10px] font-mono text-slate-300">Critical_Zone</span>
+              </div>
+           </div>
+        </div>
+
+        {/* Ticker */}
+        <div className="ticker-container !bottom-0">
+          <div className="ticker-text py-2">
+            SYSTEM_ACTIVE // DETECTING_LAND_USE_CHANGE_ACROSS_BANGALORE_WEST_CORRIDOR // MODE: {mapMode} // SOURCE: COPERNICUS_SENTINEL_2 // SCORE: {data?.intelligence_score || '0.00'} // SYSTEM_ACTIVE
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 1: SIDEBAR (EXACTLY 30%) */}
+      <aside className="sidebar h-screen w-[30vw] bg-[#060a14] flex flex-col overflow-y-auto">
+        <div className="p-8 pb-12 space-y-8">
+          
+          {/* SECTION A: Title + Key Metric */}
+          <section>
+            <div className="flex justify-between items-start mb-2">
+              <h3 className="text-[10px] font-mono tracking-widest text-accent-primary uppercase">Section A — Overview</h3>
+              <button 
+                onClick={handleSaveSnapshot}
+                disabled={saveStatus !== 'IDLE'}
+                className="text-[9px] font-mono border border-border-custom px-2 py-0.5 rounded hover:border-accent-primary transition-all text-slate-500 hover:text-accent-primary"
+              >
+                {saveStatus === 'IDLE' ? '[SAVE_SNAPSHOT]' : `[${saveStatus}]`}
+              </button>
+            </div>
+            <h2 className="text-xl font-bold text-white">Urban Expansion</h2>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="metric-card">
+                 <p className="text-[10px] font-mono text-slate-500 uppercase">Growth Velocity</p>
+                 <div className="text-2xl font-bold text-accent-primary">
+                   {loading ? '...' : (latestMetric?.growth_velocity_pct >= 0 ? '+' : '') + latestMetric?.growth_velocity_pct + '%'}
+                 </div>
+              </div>
+              <div className="metric-card">
+                 <p className="text-[10px] font-mono text-slate-500 uppercase">Intel Score</p>
+                 <div className="text-2xl font-bold text-accent-secondary">
+                   {data?.intelligence_score || '0.00'}
+                 </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Navigation Tabs */}
+          <section>
+            <div className="flex border-b border-border-custom">
+               {['SCHEMES', 'REGIONS', 'TIMELINE'].map(tab => (
+                 <button 
+                   key={tab} 
+                   onClick={() => setActiveTab(tab)}
+                   className={`px-4 py-2 text-[10px] font-mono transition-all ${
+                     activeTab === tab 
+                       ? 'border-b-2 border-accent-primary text-white' 
+                       : 'text-slate-500 hover:text-slate-300'
+                   }`}
+                 >
+                    {tab}
+                 </button>
+               ))}
+            </div>
+          </section>
+
+          {/* Tab Content Rendering */}
+          <div className="min-h-[200px]">
+            {activeTab === 'SCHEMES' && (
+              <div className="space-y-8 animate-in fade-in duration-500">
+                {/* SECTION B: Why This Matters */}
+                <section className="space-y-2">
+                  <h3 className="text-[10px] font-mono font-bold uppercase tracking-wider text-white">Why This Matters (Infrastructure Insight)</h3>
+                  <p className="text-[12px] text-slate-400 leading-relaxed italic">
+                    "Urban expansion is moving faster than population density in the western corridor, indicating a critical lag in utility allocation."
+                  </p>
+                </section>
+
+                {/* SECTION C: Who Controls the Rail */}
+                <section className="space-y-2">
+                  <h3 className="text-[10px] font-mono font-bold uppercase tracking-wider text-white">Who Controls the Rail (Power Structure)</h3>
+                  <p className="text-[12px] text-slate-400 leading-relaxed">
+                    Primary data governance is centralized within the European Space Agency (ESA). Regional planning power sits with the City Planning Commission.
+                  </p>
+                </section>
+              </div>
+            )}
+
+            {activeTab === 'REGIONS' && (
+              <div className="space-y-4 animate-in slide-in-from-right duration-300">
+                 <h3 className="text-[10px] font-mono font-bold uppercase tracking-wider text-white">Priority Change Summary</h3>
+                 <div className="space-y-2">
+                    {[
+                      { name: 'West Corridor Node', growth: '+31.0%', insight: 'High infrastructure demand' },
+                      { name: 'Central Transit Hub', growth: '+12.4%', insight: 'Stable expansion' }
+                    ].map((region, i) => (
+                      <div key={i} className="metric-card flex justify-between items-center">
+                         <div>
+                            <p className="text-[11px] font-bold text-white">{region.name}</p>
+                            <p className="text-[9px] font-mono text-slate-500 italic">{region.insight}</p>
+                         </div>
+                         <span className="text-xs font-mono text-accent-primary">{region.growth}</span>
+                      </div>
+                    ))}
+                 </div>
+              </div>
+            )}
+
+            {activeTab === 'TIMELINE' && (
+              <div className="space-y-4 animate-in slide-in-from-right duration-300">
+                 <h3 className="text-[10px] font-mono font-bold uppercase tracking-wider text-white">Temporal Metrics Log</h3>
+                 <div className="space-y-4 border-l border-border-custom ml-2 pl-4">
+                    {data?.metrics?.map((m: any, i: number) => (
+                      <div key={i} className="relative">
+                         <div className="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-accent-primary shadow-[0_0_5px_#38bdf8]"></div>
+                         <p className="text-[10px] font-mono text-accent-primary">{m.year}</p>
+                         <p className="text-[11px] text-slate-300">Expansion: {m.built_up_area_sqkm} sqkm</p>
+                         <p className="text-[9px] text-slate-500 uppercase">Alert_Status: Nominal</p>
+                      </div>
+                    ))}
+                 </div>
+              </div>
+            )}
+          </div>
+
+          {/* SECTION D: Filters + Live Insights */}
+          <section className="space-y-3 pt-4 border-t border-border-custom">
+             <h3 className="text-[10px] font-mono uppercase text-slate-500">Intelligence Insight (Intelligence Layer)</h3>
+             <div className="p-4 border border-border-custom bg-[#0B1117] rounded shadow-[inset_0_0_20px_rgba(56,189,248,0.05)]">
+                <p className="text-[11px] text-accent-primary leading-relaxed font-mono">
+                  {loading ? 'CALCULATING_INSIGHTS...' : data?.insight}
+                </p>
+             </div>
+          </section>
+
+          {/* SECTION E: Download Sample Data */}
+          <button 
+            onClick={() => {
+              const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = `urban_intelligence_export_${activeFilter.toLowerCase()}.json`;
+              link.click();
+            }}
+            className="w-full py-4 bg-[#1F2937]/30 border border-border-custom text-white text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#1F2937]/50 active:bg-[#1F2937]/70 transition-all flex items-center justify-center space-x-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            <span>Download Sample GeoJSON</span>
+          </button>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-auto p-4 border-t border-border-custom flex justify-between items-center text-[9px] font-mono text-slate-600">
+           <span>SYSTEM_STATUS: {loading ? 'SYNCING' : 'NOMINAL'}</span>
+           <span className="text-green-500/50">● ENCRYPTED_STALKER_GUARD_V1</span>
+        </div>
+      </aside>
+    </main>
+  );
+}
+</file>
+
+<file path="frontend/src/components/MapComponent.tsx">
+'use client';
+
+import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import { useEffect, useState } from 'react';
+
+// Fix for default marker icons
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
+let DefaultIcon = L.icon({
+    iconUrl: icon.src,
+    shadowUrl: iconShadow.src,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41]
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
+
+interface MapProps {
+    filter: string;
+    mode: 'BEFORE' | 'AFTER';
+}
+
+export default function MapComponent({ filter, mode }: MapProps) {
+  const position: [number, number] = [12.9716, 77.5946];
+  
+  // SECTION 3: PHASE 1 FEATURES - Before/After Logic
+  // 2018 (Before) vs 2023 (After)
+  const markers = [
+    { id: 1, pos: [12.9716, 77.5946], type: 'LIVE', name: 'URBAN_CORE', year: 2018, density: '8,400/km²', color: '#10b981', area: 20 },
+    { id: 2, pos: [12.9716, 77.5946], type: 'LIVE', name: 'URBAN_CORE', year: 2023, density: '12,400/km²', color: '#10b981', area: 35 },
+    { id: 3, pos: [12.9816, 77.6046], type: 'PILOT', name: 'GROWTH_SECTOR_A', year: 2018, density: '1,200/km²', color: '#38bdf8', area: 5 },
+    { id: 4, pos: [12.9816, 77.6046], type: 'PILOT', name: 'GROWTH_SECTOR_A', year: 2023, density: '4,200/km²', color: '#38bdf8', area: 25 },
+    { id: 5, pos: [12.9616, 77.5846], type: 'PLANNED', name: 'FUTURE_CORRIDOR_X', year: 2023, density: '800/km²', color: '#f59e0b', area: 10 }
+  ];
+
+  const currentYear = mode === 'BEFORE' ? 2018 : 2023;
+
+  const filteredMarkers = markers.filter(m => {
+    const isYearMatch = m.year === currentYear;
+    const isFilterMatch = filter === 'ALL_RAILS' || m.type === filter;
+    return isYearMatch && isFilterMatch;
+  });
+
+  return (
+    <div className="w-full h-full relative">
+      <MapContainer 
+        center={position} 
+        zoom={13} 
+        scrollWheelZoom={false} 
+        style={{ height: '100%', width: '100%', background: '#030712' }}
+      >
+        <TileLayer
+          attribution='&copy; CARTO'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        />
+        
+        {/* Heatmap Simulation via Scaled Circles */}
+        {filteredMarkers.map(marker => (
+            <CircleMarker 
+                key={marker.id}
+                center={marker.pos as [number, number]} 
+                pathOptions={{ 
+                    color: marker.color, 
+                    fillColor: marker.color, 
+                    fillOpacity: mode === 'AFTER' ? 0.6 : 0.4,
+                    weight: 2
+                }} 
+                radius={marker.area * 2}
+            >
+                <Popup>
+                    <div className="text-xs font-mono bg-[#0B1117] text-white p-2 border border-[#1F2937]">
+                        <p className="font-bold uppercase" style={{ color: marker.color }}>{marker.name} // {marker.year}</p>
+                        <p className="mt-1 text-[10px] text-slate-400">DENSITY: {marker.density}</p>
+                        <p className="text-[10px] text-slate-400 uppercase">STATUS: {marker.type}</p>
+                    </div>
+                </Popup>
+            </CircleMarker>
+        ))}
+      </MapContainer>
+      
+      {/* Visual Indicator Overlay */}
+      <div className="absolute top-4 right-4 z-[1000] glass-panel px-3 py-1 text-[10px] font-mono text-accent-primary border-accent-primary/20">
+         VIEW: {mode} // YEAR: {currentYear}
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="frontend/src/lib/api.ts">
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+
+export async function fetchGrowthMetrics(aoiId: string) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/growth/${aoiId}`);
+    if (!response.ok) throw new Error('API_UNAVAILABLE');
+    return await response.json();
+  } catch (error) {
+    // SECTION 5: MOCK FALLBACK SYSTEM
+    console.warn('Real Rails Protocol: Falling back to local mock_data.json');
+    try {
+        const fallback = await fetch('/mock_data.json');
+        return await fallback.json();
+    } catch (innerError) {
+        return {
+            aoi_id: "critical_fallback",
+            time_window: "ERROR",
+            metrics: [],
+            geojson_url: "",
+            insight: "SYSTEM_FAILURE: No data available.",
+            intelligence_score: 0
+        };
+    }
+  }
+}
+
+export async function saveAOI(aoiData: any) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/aoi`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(aoiData)
+    });
+    return await response.json();
+  } catch (error) {
+    // Fallback to LocalStorage for AOI Save
+    const existing = JSON.parse(localStorage.getItem('saved_aois') || '[]');
+    const newAoi = { ...aoiData, id: Math.random().toString(36).substr(2, 9), created_at: new Date().toISOString() };
+    localStorage.setItem('saved_aois', JSON.stringify([...existing, newAoi]));
+    return newAoi;
+  }
+}
+</file>
+
+<file path="frontend/.gitignore">
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+</file>
+
+<file path="frontend/AGENTS.md">
+<!-- BEGIN:nextjs-agent-rules -->
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+<!-- END:nextjs-agent-rules -->
+</file>
+
+<file path="frontend/CLAUDE.md">
+@AGENTS.md
+</file>
+
+<file path="frontend/eslint.config.mjs">
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
+
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  // Override default ignores of eslint-config-next.
+  globalIgnores([
+    // Default ignores of eslint-config-next:
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+  ]),
+]);
+
+export default eslintConfig;
+</file>
+
+<file path="frontend/next.config.ts">
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  /* config options here */
+};
+
+export default nextConfig;
+</file>
+
+<file path="frontend/package.json">
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@types/d3": "^7.4.3",
+    "@types/leaflet": "^1.9.21",
+    "@types/mapbox-gl": "^3.4.1",
+    "clsx": "^2.1.1",
+    "d3": "^7.9.0",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^1.11.0",
+    "mapbox-gl": "^3.22.0",
+    "next": "16.2.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-leaflet": "^5.0.0",
+    "recharts": "^3.8.1",
+    "tailwind-merge": "^3.5.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.4",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
+</file>
+
+<file path="frontend/postcss.config.mjs">
+const config = {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+
+export default config;
+</file>
+
+<file path="frontend/README.md">
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+</file>
+
+<file path="frontend/tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules"]
+}
+</file>
+
+</files>
