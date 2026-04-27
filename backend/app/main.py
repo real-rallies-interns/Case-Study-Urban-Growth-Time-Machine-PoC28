@@ -52,6 +52,8 @@ async def get_growth_metrics(aoi_id: str):
 
         intelligence_score = min(1.0, max(0.0, (growth_vel / 5.0) / 5.0))
 
+        dynamic_insight = SpatialIntelligenceService.generate_growth_insights(data['metrics'])
+
         return {
             **data,
             "insight": dynamic_insight,
