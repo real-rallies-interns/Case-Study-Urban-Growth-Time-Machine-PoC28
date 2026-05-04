@@ -182,21 +182,18 @@ export default function Dashboard() {
           <div className="min-h-[250px]">
             {activeTab === 'SCHEMES' && (
               <div className="space-y-6 animate-in fade-in duration-500">
-                <section className="space-y-2">
-                  <h3 className="text-[10px] font-mono font-bold uppercase tracking-wider text-white">Why This Matters (Infra Insight)</h3>
-                  <div className="p-4 bg-accent-primary/5 border border-accent-primary/20 rounded">
-                    <p className="text-[12px] text-slate-400 leading-relaxed italic">
-                      "Urban expansion is currently decoupled from utility density. Predictive modeling suggest a 14-month window before infrastructure failure in the West Corridor."
-                    </p>
-                  </div>
-                </section>
-
-                <section className="space-y-2">
-                  <h3 className="text-[10px] font-mono font-bold uppercase tracking-wider text-white">Who Controls the Rail</h3>
-                  <p className="text-[12px] text-slate-400 leading-relaxed">
-                    Governance sits with the <span className="text-white font-bold">ESA Spatial Authority</span> and the <span className="text-white font-bold">Regional Planning Bureau</span>. All decisions are subject to spectral verification.
-                  </p>
-                </section>
+                {data?.schemes ? data.schemes.map((scheme: any, idx: number) => (
+                  <section key={idx} className="space-y-2">
+                    <h3 className="text-[10px] font-mono font-bold uppercase tracking-wider text-white">{scheme.title}</h3>
+                    <div className={idx === 0 ? "p-4 bg-accent-primary/5 border border-accent-primary/20 rounded" : ""}>
+                      <p className={`text-[12px] text-slate-400 leading-relaxed ${idx === 0 ? "italic" : ""}`}>
+                        {idx === 0 ? `"${scheme.description}"` : scheme.description}
+                      </p>
+                    </div>
+                  </section>
+                )) : (
+                  <p className="text-xs font-mono text-slate-600">LOADING_SCHEMES_DATA...</p>
+                )}
               </div>
             )}
 
@@ -205,20 +202,23 @@ export default function Dashboard() {
                  <h3 className="text-[10px] font-mono font-bold uppercase tracking-wider text-white">Critical Change Summary</h3>
                  {loading ? <p className="text-xs font-mono text-slate-600">LOADING_SPATIAL_DATA...</p> : (
                     <div className="space-y-2">
-                      <div className="p-4 bg-red-900/10 border border-red-900/30 rounded flex justify-between items-center">
-                         <div>
-                            <p className="text-[11px] font-bold text-white">BANGALORE_WEST_CORRIDOR</p>
-                            <p className="text-[9px] font-mono text-red-400/70">URGENT_UPGRADE_REQUIRED</p>
-                         </div>
-                         <span className="text-lg font-bold text-red-500">+31%</span>
-                      </div>
-                      <div className="p-4 bg-[#0B1117] border border-border-custom rounded flex justify-between items-center opacity-60">
-                         <div>
-                            <p className="text-[11px] font-bold text-white">CENTRAL_TRANSIT_HUB</p>
-                            <p className="text-[9px] font-mono text-slate-500">MONITORING_ACTIVE</p>
-                         </div>
-                         <span className="text-lg font-bold text-slate-400">+12%</span>
-                      </div>
+                      {data?.regions?.map((region: any, idx: number) => (
+                        <div key={idx} className={`p-4 rounded flex justify-between items-center ${
+                          region.severity === 'high' 
+                            ? 'bg-red-900/10 border border-red-900/30' 
+                            : 'bg-[#0B1117] border border-border-custom opacity-60'
+                        }`}>
+                           <div>
+                              <p className="text-[11px] font-bold text-white">{region.name}</p>
+                              <p className={`text-[9px] font-mono ${
+                                region.severity === 'high' ? 'text-red-400/70' : 'text-slate-500'
+                              }`}>{region.status}</p>
+                           </div>
+                           <span className={`text-lg font-bold ${
+                             region.severity === 'high' ? 'text-red-500' : 'text-slate-400'
+                           }`}>{region.metric}</span>
+                        </div>
+                      ))}
                     </div>
                  )}
               </div>

@@ -18,6 +18,16 @@ class GrowthMetric(BaseModel):
     population_density: float
     growth_velocity_pct: Optional[float] = None
 
+class SchemeMetric(BaseModel):
+    title: str
+    description: str
+
+class RegionMetric(BaseModel):
+    name: str
+    status: str
+    metric: str
+    severity: str
+
 class ChangeDetectionResponse(BaseModel):
     aoi_id: str
     time_window: str
@@ -26,6 +36,8 @@ class ChangeDetectionResponse(BaseModel):
     insight: str
     intelligence_score: float # 0.0 to 1.0
     trend_anomaly: str # Predictive context (e.g., "ACCELERATING", "STABLE", "DECOUPLING")
+    schemes: Optional[List[SchemeMetric]] = None
+    regions: Optional[List[RegionMetric]] = None
 
 class AOISave(AOIBase):
     user_id: str

@@ -33,7 +33,31 @@ def generate_mock_growth_data(aoi_id: str) -> dict:
         "time_window": "2018-2023",
         "metrics": metrics,
         "geojson_url": "/mock/growth_boundary.json",
-        "insight": "Residential expansion moving west; 15% increase in built-up area detected since 2018."
+        "insight": "Residential expansion moving west; 15% increase in built-up area detected since 2018.",
+        "schemes": [
+            {
+                "title": "Why This Matters (Infra Insight)",
+                "description": "Urban expansion is currently decoupled from utility density. Predictive modeling suggest a 14-month window before infrastructure failure in the West Corridor."
+            },
+            {
+                "title": "Who Controls the Rail",
+                "description": "Governance sits with the ESA Spatial Authority and the Regional Planning Bureau. All decisions are subject to spectral verification."
+            }
+        ],
+        "regions": [
+            {
+                "name": "BANGALORE_WEST_CORRIDOR",
+                "status": "URGENT_UPGRADE_REQUIRED",
+                "metric": "+31%",
+                "severity": "high"
+            },
+            {
+                "name": "CENTRAL_TRANSIT_HUB",
+                "status": "MONITORING_ACTIVE",
+                "metric": "+12%",
+                "severity": "low"
+            }
+        ]
     }
 
 def save_mock_data():
