@@ -24,9 +24,10 @@ interface MapProps {
     filter: string;
     mode: 'BEFORE' | 'AFTER';
     showHeatmap: boolean;
+    onMarkerClick: (marker: any) => void;
 }
 
-export default function MapComponent({ filter, mode, showHeatmap }: MapProps) {
+export default function MapComponent({ filter, mode, showHeatmap, onMarkerClick }: MapProps) {
   const position: [number, number] = [12.9716, 77.5946];
   
   // Growth Marker Data
@@ -66,7 +67,7 @@ export default function MapComponent({ filter, mode, showHeatmap }: MapProps) {
         center={position} 
         zoom={13} 
         scrollWheelZoom={false} 
-        style={{ height: '100%', width: '100%', background: '#030712' }}
+        style={{ height: '100%', width: '100%', background: '#040705' }}
       >
         <TileLayer
           attribution='&copy; CARTO'
@@ -85,6 +86,9 @@ export default function MapComponent({ filter, mode, showHeatmap }: MapProps) {
                     weight: 2
                 }} 
                 radius={marker.area * 1.5}
+                eventHandlers={{
+                    click: () => onMarkerClick(marker)
+                }}
             >
                 <Popup>
                     <div className="text-xs font-mono bg-[#0B1117] text-white p-2 border border-[#1F2937]">
@@ -111,9 +115,7 @@ export default function MapComponent({ filter, mode, showHeatmap }: MapProps) {
         </div>
       )}
       
-      <div className="absolute top-4 right-4 z-[1000] glass-panel px-3 py-1 text-[10px] font-mono text-accent-primary border-accent-primary/20">
-         ENGINE_ACTIVE // MODE: {mode} // HEATMAP: {showHeatmap ? 'ON' : 'OFF'}
-      </div>
+      {/* Marker info indicator removed for cleaner cinematic view, handled by slide-over */}
     </div>
   );
 }

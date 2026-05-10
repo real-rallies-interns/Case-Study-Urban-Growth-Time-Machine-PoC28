@@ -1,0 +1,64 @@
+=== REAL RAILS UAT AUDIT REPORT ===
+TIMESTAMP: 2026-05-10 23:21:56
+TARGET_URL: https://poc-urbangrowth.ashybush-4248957c.centralindia.azurecontainerapps.io
+-----------------------------------
+TC1 (Visual Load): FAIL - Message: no such element: Unable to locate element: {"method":"css selector","selector":".leaflet-container"}
+  (Session info: chrome=148.0.7778.97); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#nosuchelementexception
+Stacktrace:
+0   chromedriver                        0x0000000104f9c5b0 cxxbridge1$str$ptr + 3217728
+1   chromedriver                        0x0000000104f94488 cxxbridge1$str$ptr + 3184664
+2   chromedriver                        0x0000000104a579f0 _RNvCsiKAbIcglKMQ_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 75404
+3   chromedriver                        0x0000000104aa0220 _RNvCsiKAbIcglKMQ_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 372412
+4   chromedriver                        0x0000000104adf9ac _RNvCsiKAbIcglKMQ_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 632392
+5   chromedriver                        0x0000000104a95c10 _RNvCsiKAbIcglKMQ_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 329900
+6   chromedriver                        0x0000000104f5a1b0 cxxbridge1$str$ptr + 2946368
+7   chromedriver                        0x0000000104f5d90c cxxbridge1$str$ptr + 2960540
+8   chromedriver                        0x0000000104f3f100 cxxbridge1$str$ptr + 2835600
+9   chromedriver                        0x0000000104f5e18c cxxbridge1$str$ptr + 2962716
+10  chromedriver                        0x0000000104f2fbac cxxbridge1$str$ptr + 2772796
+11  chromedriver                        0x0000000104f83258 cxxbridge1$str$ptr + 3114472
+12  chromedriver                        0x0000000104f833b8 cxxbridge1$str$ptr + 3114824
+13  chromedriver                        0x0000000104f940e0 cxxbridge1$str$ptr + 3183728
+14  libsystem_pthread.dylib             0x000000018d26bc58 _pthread_start + 136
+15  libsystem_pthread.dylib             0x000000018d266c1c thread_start + 8
+
+TC2 (The Handshake): FAIL - Message: 
+Stacktrace:
+0   chromedriver                        0x0000000104f9c5b0 cxxbridge1$str$ptr + 3217728
+1   chromedriver                        0x0000000104f94488 cxxbridge1$str$ptr + 3184664
+2   chromedriver                        0x0000000104a579f0 _RNvCsiKAbIcglKMQ_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 75404
+3   chromedriver                        0x0000000104aa0220 _RNvCsiKAbIcglKMQ_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 372412
+4   chromedriver                        0x0000000104adf9ac _RNvCsiKAbIcglKMQ_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 632392
+5   chromedriver                        0x0000000104a95c10 _RNvCsiKAbIcglKMQ_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 329900
+6   chromedriver                        0x0000000104f5a1b0 cxxbridge1$str$ptr + 2946368
+7   chromedriver                        0x0000000104f5d90c cxxbridge1$str$ptr + 2960540
+8   chromedriver                        0x0000000104f3f100 cxxbridge1$str$ptr + 2835600
+9   chromedriver                        0x0000000104f5e18c cxxbridge1$str$ptr + 2962716
+10  chromedriver                        0x0000000104f2fbac cxxbridge1$str$ptr + 2772796
+11  chromedriver                        0x0000000104f83258 cxxbridge1$str$ptr + 3114472
+12  chromedriver                        0x0000000104f833b8 cxxbridge1$str$ptr + 3114824
+13  chromedriver                        0x0000000104f940e0 cxxbridge1$str$ptr + 3183728
+14  libsystem_pthread.dylib             0x000000018d26bc58 _pthread_start + 136
+15  libsystem_pthread.dylib             0x000000018d266c1c thread_start + 8
+
+TC3 (The Signature): FAIL - Message: 
+Stacktrace:
+0   chromedriver                        0x0000000104f9c5b0 cxxbridge1$str$ptr + 3217728
+1   chromedriver                        0x0000000104f94488 cxxbridge1$str$ptr + 3184664
+2   chromedriver                        0x0000000104a579f0 _RNvCsiKAbIcglKMQ_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 75404
+3   chromedriver                        0x0000000104aa0220 _RNvCsiKAbIcglKMQ_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 372412
+4   chromedriver                        0x0000000104adf9ac _RNvCsiKAbIcglKMQ_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 632392
+5   chromedriver                        0x0000000104a95c10 _RNvCsiKAbIcglKMQ_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 329900
+6   chromedriver                        0x0000000104f5a1b0 cxxbridge1$str$ptr + 2946368
+7   chromedriver                        0x0000000104f5d90c cxxbridge1$str$ptr + 2960540
+8   chromedriver                        0x0000000104f3f100 cxxbridge1$str$ptr + 2835600
+9   chromedriver                        0x0000000104f5e18c cxxbridge1$str$ptr + 2962716
+10  chromedriver                        0x0000000104f2fbac cxxbridge1$str$ptr + 2772796
+11  chromedriver                        0x0000000104f83258 cxxbridge1$str$ptr + 3114472
+12  chromedriver                        0x0000000104f833b8 cxxbridge1$str$ptr + 3114824
+13  chromedriver                        0x0000000104f940e0 cxxbridge1$str$ptr + 3183728
+14  libsystem_pthread.dylib             0x000000018d26bc58 _pthread_start + 136
+15  libsystem_pthread.dylib             0x000000018d266c1c thread_start + 8
+
+-----------------------------------
+STATUS: COMPLETED

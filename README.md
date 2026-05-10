@@ -95,5 +95,11 @@ npm run dev
 
 ---
 
+## 👨‍💻 Developer
+**Ananthu Anil**
+Intern — Real Rails Protocol (Batch 2)
+
+---
+
 ## 📜 License
 Internal Internship Project - PoC #28.
