@@ -5,7 +5,8 @@ import dynamic from 'next/dynamic';
 import { fetchGrowthMetrics, fetchAllGrowthMetrics, saveAOI } from '@/lib/api';
 import Header from '@/components/Header';
 import InfoModal from '@/components/InfoModal';
-import { X, ChevronRight, BarChart2, Globe, Bookmark, Zap } from 'lucide-react';
+import { X, ChevronRight, BarChart2, Globe, Bookmark, Zap, Activity } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 const MapComponent = dynamic(() => import('@/components/MapComponent'), { 
   ssr: false,
@@ -26,13 +27,19 @@ export default function Dashboard() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
+  const [selectedIntelligence, setSelectedIntelligence] = useState<any>({
+    schemes: [],
+    regions: [],
+    stats: [],
+    trend: []
+  });
 
   useEffect(() => {
     async function loadData() {
       setLoading(true);
       const rawMetrics = await fetchAllGrowthMetrics();
       if (Array.isArray(rawMetrics) && rawMetrics.length > 0) {
-        setData({ 
+        const initialData = { 
             metrics: rawMetrics, 
             aoi_id: "BNG_NETWORK",
             time_window: "2000-2023",
@@ -41,6 +48,11 @@ export default function Dashboard() {
             trend_anomaly: "LOCAL_SPRAWL",
             infrastructure_led: true,
             capital_correlation_score: 0.88,
+        };
+        setData(initialData);
+        
+        // Default Global Intelligence
+        setSelectedIntelligence({
             schemes: [
                 { title: "Metro Phase 3 Expansion", description: "Integration of outer-ring road clusters with high-density transit nodes." },
                 { title: "Smart City Grid 2.0", description: "Deployment of localized energy and water telemetry across JP Nagar and Whitefield." },
@@ -49,8 +61,12 @@ export default function Dashboard() {
             regions: [
                 { name: "Whitefield Cluster", metric: "18% Growth", status: "HIGH_VELOCITY", severity: "high" },
                 { name: "Hebbal Corridor", metric: "0.82 Infra", status: "STABLE", severity: "low" },
-                { name: "Kengeri Sprawl", metric: "4.2k Pop/sqkm", status: "ACCELERATING", severity: "high" },
-                { name: "JP Nagar South", metric: "0.91 Intel", status: "STABLE", severity: "low" }
+                { name: "Kengeri Sprawl", metric: "4.2k Pop/sqkm", status: "ACCELERATING", severity: "high" }
+            ],
+            stats: [
+                { label: "Total Nodes", value: rawMetrics.length, unit: "POINTS" },
+                { label: "Temporal Span", value: "24", unit: "YEARS" },
+                { label: "Avg Density", value: "4.2k", unit: "P/KM2" }
             ]
         });
       }
@@ -139,16 +155,46 @@ export default function Dashboard() {
     const dynamicAnomaly = type === 'INDUSTRIAL' ? 'INFRA_LED_EXPANSION' : (isHighGrowth ? 'ACCELERATING_SPRAWL' : 'STABLE_GROWTH');
     const dynamicCorrelation = (0.7 + (seed % 30) / 100).toFixed(2);
     
+    // 3. PROXIMITY ANALYSIS: Find nodes within 5km
+    const nearby = data?.metrics?.filter((m: any) => {
+        if (m.aoi_id === marker.aoi_id || m.year !== selectedYear) return false;
+        const dist = Math.sqrt(Math.pow(m.latitude - marker.latitude, 2) + Math.pow(m.longitude - marker.longitude, 2));
+        return dist < 0.03; // ~3-5km radius
+    }).slice(0, 3) || [];
+
+    // 4. UPDATE STATE
+    setSelectedIntelligence({
+        schemes: selectedSchemes,
+        regions: [
+            { name: "Local Density", metric: `${marker.population_density.toFixed(0)}/km²`, status: "VERIFIED", severity: "low" },
+            { name: "Expansion Velocity", metric: `${marker.growth_velocity_pct}%`, status: isHighGrowth ? "HIGH" : "NORMAL", severity: isHighGrowth ? "high" : "low" },
+            { name: "Nearby Activity", metric: `${nearby.length} Nodes`, status: "DETECTED", severity: "low" }
+        ],
+        stats: [
+            { label: "Built-up Area", value: marker.built_up_area_sqkm, unit: "SQKM" },
+            { label: "Investment", value: marker.capital_investment_m_usd, unit: "M USD" },
+            { label: "Confidence", value: (marker.confidence_score * 100).toFixed(0), unit: "%" },
+            { label: "Lat/Lon", value: `${marker.latitude.toFixed(3)}, ${marker.longitude.toFixed(3)}`, unit: "DEG" }
+        ],
+        nearby: nearby.map((n: any) => ({
+            name: n.region_name,
+            type: n.land_use_type,
+            distance: "Local"
+        })),
+        trend: data?.metrics?.filter((m: any) => m.aoi_id === marker.aoi_id)
+            .sort((a: any, b: any) => a.year - b.year)
+            .map((m: any) => ({
+                year: m.year,
+                density: m.population_density,
+                infra: m.infrastructure_index * 100
+            })) || []
+    });
+
     setData((prev: any) => ({
         ...prev,
         trend_anomaly: dynamicAnomaly,
         capital_correlation_score: dynamicCorrelation,
-        insight: `Detected ${type} activity in ${marker.region_name}. Intelligence score of 0.94 indicates high-confidence ${dynamicAnomaly.toLowerCase()} pattern.`,
-        schemes: selectedSchemes,
-        regions: [
-            { name: "Local Density", metric: `${marker.population_density.toFixed(0)}/km²`, status: "VERIFIED", severity: "low" },
-            { name: "Expansion Velocity", metric: `${marker.growth_velocity_pct}%`, status: isHighGrowth ? "HIGH" : "NORMAL", severity: isHighGrowth ? "high" : "low" }
-        ]
+        insight: `Detected ${type} activity in ${marker.region_name}. Intelligence score of 0.94 indicates high-confidence ${dynamicAnomaly.toLowerCase()} pattern.`
     }));
     
     setIsPanelOpen(true);
@@ -169,6 +215,7 @@ export default function Dashboard() {
           filter={activeFilter} 
           showHeatmap={showHeatmap} 
           onMarkerClick={handleMarkerClick}
+          selectedMarkerId={selectedMarker?.aoi_id}
         />
       </section>
 
@@ -288,6 +335,8 @@ export default function Dashboard() {
                {[
                  { id: 'SCHEMES', icon: Globe },
                  { id: 'REGIONS', icon: BarChart2 },
+                 { id: 'TREND', icon: Activity },
+                 { id: 'STATS', icon: Zap },
                  { id: 'LIBRARY', icon: Bookmark }
                ].map(tab => (
                  <button 
@@ -311,7 +360,7 @@ export default function Dashboard() {
             <div className="min-h-[300px]">
               {activeTab === 'SCHEMES' && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  {data?.schemes?.map((scheme: any, idx: number) => (
+                  {selectedIntelligence.schemes.map((scheme: any, idx: number) => (
                     <div key={idx} className="relative pl-4 border-l border-white/5 hover:border-accent-primary/30 transition-colors group">
                       <div className="absolute -left-[1px] top-0 w-[1px] h-0 group-hover:h-full bg-accent-primary transition-all duration-300"></div>
                       <h5 className="text-[10px] font-mono font-bold uppercase tracking-wider text-white mb-2">{scheme.title}</h5>
@@ -325,7 +374,7 @@ export default function Dashboard() {
 
               {activeTab === 'REGIONS' && (
                 <div className="space-y-3 animate-in fade-in slide-in-from-right-2 duration-300">
-                   {data?.regions?.map((region: any, idx: number) => (
+                   {selectedIntelligence.regions.map((region: any, idx: number) => (
                       <div key={idx} className={`p-4 rounded-lg flex justify-between items-center transition-all hover:scale-[1.02] ${
                         region.severity === 'high' 
                           ? 'bg-red-500/10 border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.05)]' 
@@ -342,6 +391,57 @@ export default function Dashboard() {
                              region.severity === 'high' ? 'text-red-500' : 'text-accent-primary'
                            }`}>{region.metric}</span>
                          </div>
+                      </div>
+                   ))}
+                </div>
+              )}
+
+              {activeTab === 'TREND' && (
+                <div className="h-[250px] w-full bg-black/40 border border-white/5 p-4 rounded animate-in fade-in slide-in-from-right-2 duration-300">
+                    <h5 className="text-[9px] font-mono text-slate-500 uppercase mb-4">Historical Growth Trajectory</h5>
+                    <ResponsiveContainer width="100%" height="85%">
+                        <LineChart data={selectedIntelligence.trend}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" vertical={false} />
+                            <XAxis 
+                                dataKey="year" 
+                                fontSize={8} 
+                                tick={{fill: '#4b5563'}} 
+                                axisLine={false}
+                                tickLine={false}
+                            />
+                            <YAxis 
+                                fontSize={8} 
+                                tick={{fill: '#4b5563'}} 
+                                axisLine={false}
+                                tickLine={false}
+                                domain={['auto', 'auto']}
+                            />
+                            <Tooltip 
+                                contentStyle={{ backgroundColor: '#0B1117', border: '1px solid #1F2937', fontSize: '9px', fontFamily: 'monospace' }}
+                                itemStyle={{ color: '#10b981' }}
+                            />
+                            <Line 
+                                type="monotone" 
+                                dataKey="density" 
+                                stroke="#10b981" 
+                                strokeWidth={2} 
+                                dot={false} 
+                                activeDot={{ r: 4, fill: '#10b981' }}
+                            />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
+              )}
+
+              {activeTab === 'STATS' && (
+                <div className="grid grid-cols-2 gap-3 animate-in fade-in slide-in-from-right-2 duration-300">
+                   {selectedIntelligence.stats.map((stat: any, idx: number) => (
+                      <div key={idx} className="bg-black/40 border border-white/5 p-4 rounded group hover:border-accent-primary/30 transition-all">
+                        <p className="text-[8px] font-mono text-slate-500 uppercase mb-1">{stat.label}</p>
+                        <div className="flex items-baseline space-x-1">
+                          <span className="text-sm font-bold text-white">{stat.value}</span>
+                          <span className="text-[8px] font-mono text-slate-600">{stat.unit}</span>
+                        </div>
                       </div>
                    ))}
                 </div>

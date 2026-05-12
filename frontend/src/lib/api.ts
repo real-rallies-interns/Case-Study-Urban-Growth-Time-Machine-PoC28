@@ -1,5 +1,5 @@
-// Hardcode for local dev to ensure we hit the right backend
-const API_BASE_URL = 'http://localhost:8001/api/v1';
+// Use environment variable for API URL, default to relative for Docker/Production
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
 
 export async function fetchGrowthMetrics(aoiId: string) {
   try {

@@ -3,8 +3,8 @@ import os
 from typing import List, Dict, Optional
 
 class DataService:
-    # Absolute path to ensure we always hit the right file
-    DATA_PATH = "/Users/ananthuanil/Internship/2nd project/2ndprject/urban-growth-mock-data/export/synthetic_growth_data.json"
+    # Use environment variable for portability (Docker/Cloud)
+    DATA_PATH = os.getenv("GROWTH_DATA_PATH", "/app/data/synthetic_growth_data.json")
 
     @staticmethod
     def load_synthetic_data() -> Dict:

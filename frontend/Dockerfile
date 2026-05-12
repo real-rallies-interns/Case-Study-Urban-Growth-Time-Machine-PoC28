@@ -4,11 +4,11 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Install dependencies first (for caching)
-COPY package.json package-lock.json ./
+COPY ./frontend/package.json ./frontend/package-lock.json ./
 RUN npm install
 
 # Copy source code
-COPY . .
+COPY ./frontend .
 
 # Set environment variable for build time
 ARG NEXT_PUBLIC_API_URL

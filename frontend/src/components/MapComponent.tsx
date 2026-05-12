@@ -26,9 +26,10 @@ interface MapProps {
     filter: string;
     showHeatmap: boolean;
     onMarkerClick: (marker: any) => void;
+    selectedMarkerId?: string | null;
 }
 
-export default function MapComponent({ metrics, year, filter, showHeatmap, onMarkerClick }: MapProps) {
+export default function MapComponent({ metrics, year, filter, showHeatmap, onMarkerClick, selectedMarkerId }: MapProps) {
   const position: [number, number] = [12.9716, 77.5946];
   
   const filteredMarkers = useMemo(() => {
@@ -105,6 +106,39 @@ export default function MapComponent({ metrics, year, filter, showHeatmap, onMar
                 </Popup>
             </CircleMarker>
         ))}
+
+        {/* Selected Node Analysis Layer */}
+        {selectedMarkerId && metrics?.find(m => m.aoi_id === selectedMarkerId && m.year === year) && (
+            (() => {
+                const marker = metrics.find(m => m.aoi_id === selectedMarkerId && m.year === year);
+                return (
+                    <>
+                        <CircleMarker
+                            center={[marker.latitude, marker.longitude] as [number, number]}
+                            pathOptions={{ 
+                                color: '#10b981', 
+                                fillColor: '#10b981', 
+                                fillOpacity: 0.2,
+                                weight: 2,
+                                dashArray: '5, 10'
+                            }}
+                            radius={40}
+                            className="animate-pulse"
+                        />
+                        <CircleMarker
+                            center={[marker.latitude, marker.longitude] as [number, number]}
+                            pathOptions={{ 
+                                color: '#10b981', 
+                                fillColor: '#10b981', 
+                                fillOpacity: 0.1,
+                                weight: 1
+                            }}
+                            radius={80}
+                        />
+                    </>
+                );
+            })()
+        )}
       </MapContainer>
 
       {/* Overlaying Deck.gl for Heatmap */}

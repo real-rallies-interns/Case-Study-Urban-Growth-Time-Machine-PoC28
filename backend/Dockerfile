@@ -21,7 +21,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY . .
+COPY ./backend .
+
+# Copy intelligence data
+COPY ./urban-growth-mock-data/export/synthetic_growth_data.json ./data/synthetic_growth_data.json
 
 # Expose backend port
 EXPOSE 8000
