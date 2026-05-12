@@ -9,12 +9,17 @@ class DataService:
     @staticmethod
     def load_synthetic_data() -> Dict:
         """Loads the synthetic dataset from the exported JSON file."""
-        if not os.path.exists(DataService.DATA_PATH):
-            print(f"⚠️ Warning: Synthetic data file not found at {DataService.DATA_PATH}")
+        # Robust path resolution: try env var, then fallback to container default
+        path = os.getenv("GROWTH_DATA_PATH")
+        if not path or not os.path.exists(path):
+            path = "/app/data/synthetic_growth_data.json"
+
+        if not os.path.exists(path):
+            print(f"⚠️ Warning: Synthetic data file not found at {path}")
             return {"data": []}
         
         try:
-            with open(DataService.DATA_PATH, 'r') as f:
+            with open(path, 'r') as f:
                 return json.load(f)
         except Exception as e:
             print(f"❌ Error loading synthetic data: {e}")

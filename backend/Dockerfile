@@ -17,7 +17,7 @@ ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
 ENV C_INCLUDE_PATH=/usr/include/gdal
 
 # Copy requirements and install
-COPY requirements.txt .
+COPY ./backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
@@ -27,7 +27,7 @@ COPY ./backend .
 COPY ./urban-growth-mock-data/export/synthetic_growth_data.json ./data/synthetic_growth_data.json
 
 # Expose backend port
-EXPOSE 8000
+EXPOSE 8001
 
 # Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8001"]
