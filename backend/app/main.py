@@ -36,8 +36,11 @@ async def get_all_growth_metrics():
     """
     try:
         all_data = DataService.load_synthetic_data()
-        return all_data.get("data", [])
+        metrics = all_data.get("data", [])
+        print(f"📊 Serving {len(metrics)} growth metrics")
+        return metrics
     except Exception as e:
+        print(f"❌ Error in get_all_growth_metrics: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/v1/growth/{aoi_id}", response_model=ChangeDetectionResponse)
@@ -114,8 +117,21 @@ async def list_aois():
 
 @app.get("/api/v1/health")
 async def health_check():
-    return {"status": "healthy"}
+    # Diagnostic info
+    path = os.getenv("GROWTH_DATA_PATH", "NOT_SET")
+    exists = os.path.exists(path) if path != "NOT_SET" else False
+    fallback_path = "/app/data/synthetic_growth_data.json"
+    fallback_exists = os.path.exists(fallback_path)
+    
+    return {
+        "status": "healthy",
+        "env_path": path,
+        "env_path_exists": exists,
+        "fallback_path": fallback_path,
+        "fallback_exists": fallback_exists,
+        "cwd": os.getcwd()
+    }
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
