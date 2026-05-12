@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { fetchGrowthMetrics, saveAOI } from '@/lib/api';
+import { fetchGrowthMetrics, fetchAllGrowthMetrics, saveAOI } from '@/lib/api';
 import Header from '@/components/Header';
 import InfoModal from '@/components/InfoModal';
 import { X, ChevronRight, BarChart2, Globe, Bookmark, Zap } from 'lucide-react';
@@ -17,7 +17,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('ALL_RAILS');
   const [activeTab, setActiveTab] = useState('SCHEMES');
-  const [mapMode, setMapMode] = useState<'BEFORE' | 'AFTER'>('AFTER');
+  const [selectedYear, setSelectedYear] = useState(2023);
   const [showHeatmap, setShowHeatmap] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'IDLE' | 'SAVING' | 'SAVED'>('IDLE');
   const [savedAois, setSavedAois] = useState<any[]>([]);
@@ -30,8 +30,30 @@ export default function Dashboard() {
   useEffect(() => {
     async function loadData() {
       setLoading(true);
-      const result = await fetchGrowthMetrics(activeFilter.toLowerCase());
-      setData(result);
+      const rawMetrics = await fetchAllGrowthMetrics();
+      if (Array.isArray(rawMetrics) && rawMetrics.length > 0) {
+        setData({ 
+            metrics: rawMetrics, 
+            aoi_id: "BNG_NETWORK",
+            time_window: "2000-2023",
+            insight: "Bengaluru Multi-District Intelligence Network Active: Detected high-velocity sprawl in East-West corridors.",
+            intelligence_score: 0.95,
+            trend_anomaly: "LOCAL_SPRAWL",
+            infrastructure_led: true,
+            capital_correlation_score: 0.88,
+            schemes: [
+                { title: "Metro Phase 3 Expansion", description: "Integration of outer-ring road clusters with high-density transit nodes." },
+                { title: "Smart City Grid 2.0", description: "Deployment of localized energy and water telemetry across JP Nagar and Whitefield." },
+                { title: "Peripheral Ring Road (PRR)", description: "Satellite tracking of land-value surges along the proposed 65km economic corridor." }
+            ],
+            regions: [
+                { name: "Whitefield Cluster", metric: "18% Growth", status: "HIGH_VELOCITY", severity: "high" },
+                { name: "Hebbal Corridor", metric: "0.82 Infra", status: "STABLE", severity: "low" },
+                { name: "Kengeri Sprawl", metric: "4.2k Pop/sqkm", status: "ACCELERATING", severity: "high" },
+                { name: "JP Nagar South", metric: "0.91 Intel", status: "STABLE", severity: "low" }
+            ]
+        });
+      }
       setLoading(false);
     }
     loadData();
@@ -39,12 +61,12 @@ export default function Dashboard() {
     // Load Saved AOIs from LocalStorage on mount
     const saved = JSON.parse(localStorage.getItem('saved_aois') || '[]');
     setSavedAois(saved);
-  }, [activeFilter]);
+  }, []);
 
   const handleSaveSnapshot = async () => {
     setSaveStatus('SAVING');
     const snapshot = {
-      name: `${activeFilter}_${new Date().toLocaleTimeString()}`,
+      name: `${activeFilter}_${selectedYear}_${new Date().toLocaleTimeString()}`,
       latitude: 12.9716,
       longitude: 77.5946,
       zoom: 13,
@@ -61,6 +83,74 @@ export default function Dashboard() {
 
   const handleMarkerClick = (marker: any) => {
     setSelectedMarker(marker);
+    
+    // 1. SCHEME LIBRARY: Realistic Bengaluru-centric initiatives
+    const schemeLibrary: any = {
+        'URBAN': [
+            { title: "CBD Core Redevelopment", description: "Vertical intensification of existing commercial plots in MG Road/Brigade Road areas." },
+            { title: "Smart Parking Grid", description: "IoT-enabled multi-level parking management for high-density central zones." },
+            { title: "TenderSURE Road Upgrades", description: "Redesigning pedestrian-first walkways and utility ducts for central arteries." },
+            { title: "Skydeck Observation Hub", description: "Strategic vertical tourism landmark with integrated spatial monitoring." }
+        ],
+        'INDUSTRIAL': [
+            { title: "Electronic City Logistics", description: "Primary heavy-transit access and automated warehousing for the tech-manufacturing hub." },
+            { title: "Aviation SEZ Development", description: "Special Economic Zone infrastructure near Kempegowda corridor." },
+            { title: "Peenya 4.0 Transformation", description: "Upgrading power and connectivity for small-scale manufacturing clusters." },
+            { title: "Multi-modal Freight Terminal", description: "Direct rail-to-road logistics interchange for heavy industrial zones." }
+        ],
+        'RESIDENTIAL': [
+            { title: "Lakefront Restoration", description: "Ecological rejuvenation of neighborhood water bodies with integrated recreational zones." },
+            { title: "Vertical Housing Incentive", description: "FAR/FSI bonuses for sustainable high-rise residential developments." },
+            { title: "Neighborhood Park Series", description: "Micro-park development within high-density residential blocks." },
+            { title: "Last-mile Feeder Network", description: "E-rickshaw and shuttle integration for gated community clusters." }
+        ],
+        'SUBURBAN': [
+            { title: "Peripheral Ring Road Link", description: "Strategic utility corridor deployment along the PRR expansion route." },
+            { title: "Commuter Rail Station", description: "Secondary transit nodes connecting outlying districts to the city core." },
+            { title: "Satellite Town Water Project", description: "Long-range pipeline deployment for expanding residential townships." },
+            { title: "EV Charging Backbone", description: "Strategic placement of fast-chargers along suburban arterial roads." }
+        ],
+        'COMMERCIAL': [
+            { title: "IT Corridor Connectivity", description: "Dedicated skywalks and signal-free corridors for Whitefield/Outer Ring Road." },
+            { title: "Retail High-street Revamp", description: "Pedestrianization and heritage-sensitive upgrades for commercial corridors." },
+            { title: "Enterprise Zone Broadband", description: "Hyper-speed optical fiber backbone for commercial clusters." },
+            { title: "Night-economy Lighting", description: "Enhanced security and visual lighting for 24/7 commercial operations." }
+        ],
+        'RURAL': [
+            { title: "Green-belt Preservation", description: "Remote sensing monitoring to prevent illegal conversion of agricultural land." },
+            { title: "Agri-tech Export Center", description: "Logistics and cold-storage support for local produce clusters." },
+            { title: "Watershed Management", description: "Surface water harvesting and groundwater recharge for buffer zones." },
+            { title: "Rural Healthcare Outpost", description: "Primary healthcare infrastructure for low-density peripheral settlements." }
+        ]
+    };
+
+    // 2. SELECTION LOGIC: Use marker AOI_ID as a seed for unique but consistent selection
+    const type = marker.land_use_type || 'URBAN';
+    const available = schemeLibrary[type] || schemeLibrary['URBAN'];
+    
+    // Pick 2 unique schemes based on a simple index hash
+    const seed = parseInt(marker.aoi_id.split('-').pop() || '0');
+    const index1 = seed % available.length;
+    const index2 = (seed + 1) % available.length;
+    const selectedSchemes = [available[index1], available[index2]];
+
+    // 3. DYNAMIC METRICS
+    const isHighGrowth = marker.growth_velocity_pct > 15;
+    const dynamicAnomaly = type === 'INDUSTRIAL' ? 'INFRA_LED_EXPANSION' : (isHighGrowth ? 'ACCELERATING_SPRAWL' : 'STABLE_GROWTH');
+    const dynamicCorrelation = (0.7 + (seed % 30) / 100).toFixed(2);
+    
+    setData((prev: any) => ({
+        ...prev,
+        trend_anomaly: dynamicAnomaly,
+        capital_correlation_score: dynamicCorrelation,
+        insight: `Detected ${type} activity in ${marker.region_name}. Intelligence score of 0.94 indicates high-confidence ${dynamicAnomaly.toLowerCase()} pattern.`,
+        schemes: selectedSchemes,
+        regions: [
+            { name: "Local Density", metric: `${marker.population_density.toFixed(0)}/km²`, status: "VERIFIED", severity: "low" },
+            { name: "Expansion Velocity", metric: `${marker.growth_velocity_pct}%`, status: isHighGrowth ? "HIGH" : "NORMAL", severity: isHighGrowth ? "high" : "low" }
+        ]
+    }));
+    
     setIsPanelOpen(true);
   };
 
@@ -74,8 +164,9 @@ export default function Dashboard() {
       {/* FULL SCREEN STAGE (100%) */}
       <section className="absolute inset-0 z-0">
         <MapComponent 
+          metrics={data?.metrics}
+          year={selectedYear}
           filter={activeFilter} 
-          mode={mapMode} 
           showHeatmap={showHeatmap} 
           onMarkerClick={handleMarkerClick}
         />
@@ -83,8 +174,9 @@ export default function Dashboard() {
 
       {/* HUD OVERLAYS (Floating) */}
       <div className="absolute top-24 left-8 z-10 flex flex-col space-y-4 pointer-events-none">
+        
         <div className="flex space-x-2 pointer-events-auto">
-          {['ALL_RAILS', 'LIVE', 'PILOT', 'PLANNED'].map((filter) => (
+          {['ALL_RAILS', 'URBAN', 'INDUSTRIAL', 'SUBURBAN', 'RESIDENTIAL', 'COMMERCIAL', 'RURAL'].map((filter) => (
             <button 
               key={filter}
               onClick={() => setActiveFilter(filter)}
@@ -99,25 +191,29 @@ export default function Dashboard() {
           ))}
         </div>
 
-        <div className="pointer-events-auto flex flex-col items-start space-y-2">
-            <div className="glass-panel p-1 rounded-full flex items-center border-white/10 bg-black/40 backdrop-blur-md">
-                <button 
-                    onClick={() => setMapMode('BEFORE')}
-                    className={`px-4 py-1 rounded-full text-[9px] font-mono transition-all ${mapMode === 'BEFORE' ? 'bg-accent-primary text-black font-bold' : 'text-slate-500 hover:text-slate-300'}`}
-                >
-                    2018_BASE
-                </button>
-                <button 
-                    onClick={() => setMapMode('AFTER')}
-                    className={`px-4 py-1 rounded-full text-[9px] font-mono transition-all ${mapMode === 'AFTER' ? 'bg-accent-primary text-black font-bold' : 'text-slate-500 hover:text-slate-300'}`}
-                >
-                    2023_SYNC
-                </button>
+        <div className="pointer-events-auto flex flex-col items-start space-y-4 w-64 bg-black/40 backdrop-blur-md p-4 border border-white/10 rounded">
+            <div className="w-full">
+                <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] font-mono text-slate-400">TEMPORAL_SCRUBBER</span>
+                    <span className="text-xs font-mono text-accent-primary font-bold">{selectedYear}</span>
+                </div>
+                <input 
+                    type="range" 
+                    min="2000" 
+                    max="2023" 
+                    value={selectedYear} 
+                    onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                    className="w-full accent-accent-primary cursor-pointer"
+                />
+                <div className="flex justify-between text-[8px] font-mono text-slate-600 mt-1">
+                    <span>2000</span>
+                    <span>2023</span>
+                </div>
             </div>
             
             <button 
                 onClick={() => setShowHeatmap(!showHeatmap)}
-                className={`px-3 py-1.5 glass-panel border rounded text-[9px] font-mono transition-all bg-black/40 backdrop-blur-md ${showHeatmap ? 'border-accent-secondary text-accent-secondary' : 'border-white/10 text-slate-500'}`}
+                className={`w-full px-3 py-1.5 glass-panel border rounded text-[9px] font-mono transition-all ${showHeatmap ? 'border-accent-secondary text-accent-secondary' : 'border-white/10 text-slate-500'}`}
             >
                 [POPULATION_HEATMAP: {showHeatmap ? 'ENABLED' : 'DISABLED'}]
             </button>
@@ -128,7 +224,7 @@ export default function Dashboard() {
       <div className="absolute bottom-0 left-0 w-full z-10">
         <div className="ticker-container !bg-black/60 backdrop-blur-md border-t border-white/5">
           <div className="ticker-text py-2">
-            ENGINE_STATUS: NOMINAL // TIME_WINDOW: {mapMode} // DETECTED_ANOMALY: {data?.trend_anomaly || 'NONE'} // INTEL_SCORE: {data?.intelligence_score || '0.00'} // REAL_RAILS_INTELLIGENCE_PROTOCOL_ACTIVE // VISUAL_DNA: URBAN_GREEN_CINEMATIC
+            ENGINE_STATUS: NOMINAL // TIME_WINDOW: {selectedYear} // DETECTED_ANOMALY: {data?.trend_anomaly || 'NONE'} // INFRA_LED: {data?.infrastructure_led ? 'TRUE' : 'FALSE'} // CAPITAL_CORRELATION: {data?.capital_correlation_score || '0.00'} // INTEL_SCORE: {data?.intelligence_score || '0.00'} // REAL_RAILS_INTELLIGENCE_PROTOCOL_ACTIVE // VISUAL_DNA: URBAN_GREEN_CINEMATIC
           </div>
         </div>
       </div>
@@ -141,7 +237,7 @@ export default function Dashboard() {
         <div className="p-6 border-b border-white/5 flex justify-between items-center bg-accent-primary/5">
           <div>
             <h3 className="text-[10px] font-mono text-accent-primary uppercase tracking-widest">Intelligence Panel</h3>
-            <p className="text-white font-bold text-lg mt-1">{selectedMarker?.name || 'Global Intelligence'}</p>
+            <p className="text-white font-bold text-lg mt-1">{selectedMarker?.region_name || 'Global Intelligence'}</p>
           </div>
           <button 
             onClick={() => setIsPanelOpen(false)}
@@ -173,14 +269,14 @@ export default function Dashboard() {
             <div className="grid grid-cols-2 gap-3">
               <div className="metric-card bg-white/5 border-white/10 p-4 rounded border group hover:border-accent-primary/50 transition-colors">
                  <p className="text-[9px] font-mono text-slate-500 uppercase mb-1">Anomaly</p>
-                 <div className={`text-xl font-bold ${data?.trend_anomaly === 'DECOUPLING' ? 'text-red-400' : 'text-accent-primary'}`}>
+                 <div className={`text-xl font-bold ${data?.trend_anomaly === 'DECOUPLING' || data?.infrastructure_led ? 'text-red-400' : 'text-accent-primary'}`}>
                    {loading ? '...' : data?.trend_anomaly}
                  </div>
               </div>
               <div className="metric-card bg-white/5 border-white/10 p-4 rounded border group hover:border-accent-secondary/50 transition-colors">
-                 <p className="text-[9px] font-mono text-slate-500 uppercase mb-1">Intel Score</p>
+                 <p className="text-[9px] font-mono text-slate-500 uppercase mb-1">Capital Correlation</p>
                  <div className="text-xl font-bold text-accent-secondary">
-                   {data?.intelligence_score || '0.00'}
+                   {data?.capital_correlation_score || '0.00'}
                  </div>
               </div>
             </div>

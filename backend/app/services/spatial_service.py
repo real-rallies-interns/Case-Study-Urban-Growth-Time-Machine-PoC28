@@ -44,7 +44,16 @@ class SpatialIntelligenceService:
         baseline = metrics[0]
         
         total_diff = round(recent['built_up_area_sqkm'] - baseline['built_up_area_sqkm'], 2)
+        infra = recent.get('infrastructure_index', 0)
+        investment = recent.get('capital_investment_m_usd', 0)
         
-        if total_diff > 10:
-            return f"Critical expansion detected: Built-up area increased by {total_diff:.2f}sqkm. Infrastructure demand is peaking in the western corridors."
-        return "Stable growth observed. Urban density is consolidating within existing boundaries."
+        if infra > 0.8 and total_diff < 10:
+            return f"INFRA_LEAD detected. High infrastructure density ({infra}) with low population expansion. This suggests a planned 'Engineered Growth' scenario or early land visibility for capital actors."
+        
+        if investment > 1000 and total_diff > 20:
+            return f"CAPITAL_SURGE detected. Expansion is highly correlated with FDI/Investment ($ {investment}M). Urban growth is being steered by institutional real estate play."
+
+        if total_diff > 15:
+            return f"Organic expansion detected: Built-up area increased by {total_diff:.2f}sqkm. Population density is trailing physical development."
+        
+        return "Stable urban consolidation. Growth is organic and matches historical population shifts."

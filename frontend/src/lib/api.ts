@@ -1,4 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
+// Hardcode for local dev to ensure we hit the right backend
+const API_BASE_URL = 'http://localhost:8001/api/v1';
 
 export async function fetchGrowthMetrics(aoiId: string) {
   try {
@@ -6,21 +7,19 @@ export async function fetchGrowthMetrics(aoiId: string) {
     if (!response.ok) throw new Error('API_UNAVAILABLE');
     return await response.json();
   } catch (error) {
-    // SECTION 5: MOCK FALLBACK SYSTEM
-    console.warn('Real Rails Protocol: Falling back to local mock_data.json');
-    try {
-        const fallback = await fetch('/mock_data.json');
-        return await fallback.json();
-    } catch (innerError) {
-        return {
-            aoi_id: "critical_fallback",
-            time_window: "ERROR",
-            metrics: [],
-            geojson_url: "",
-            insight: "SYSTEM_FAILURE: No data available.",
-            intelligence_score: 0
-        };
-    }
+    console.error('API Error:', error);
+    return { aoi_id: "error", metrics: [] };
+  }
+}
+
+export async function fetchAllGrowthMetrics() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/growth`);
+    if (!response.ok) throw new Error('API_UNAVAILABLE');
+    return await response.json();
+  } catch (error) {
+    console.error('API Error:', error);
+    return [];
   }
 }
 

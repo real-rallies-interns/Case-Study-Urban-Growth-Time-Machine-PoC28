@@ -21,44 +21,49 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 interface MapProps {
+    metrics: any[];
+    year: number;
     filter: string;
-    mode: 'BEFORE' | 'AFTER';
     showHeatmap: boolean;
     onMarkerClick: (marker: any) => void;
 }
 
-export default function MapComponent({ filter, mode, showHeatmap, onMarkerClick }: MapProps) {
+export default function MapComponent({ metrics, year, filter, showHeatmap, onMarkerClick }: MapProps) {
   const position: [number, number] = [12.9716, 77.5946];
   
-  // Growth Marker Data
-  const markers = [
-    { id: 1, pos: [77.5946, 12.9716], type: 'LIVE', name: 'URBAN_CORE', year: 2018, density: 8400, area: 20 },
-    { id: 2, pos: [77.5946, 12.9716], type: 'LIVE', name: 'URBAN_CORE', year: 2023, density: 12400, area: 35 },
-    { id: 3, pos: [77.6046, 12.9816], type: 'PILOT', name: 'GROWTH_SECTOR_A', year: 2018, density: 1200, area: 5 },
-    { id: 4, pos: [77.6046, 12.9816], type: 'PILOT', name: 'GROWTH_SECTOR_A', year: 2023, density: 4200, area: 25 },
-    { id: 5, pos: [77.5846, 12.9616], type: 'PLANNED', name: 'FUTURE_CORRIDOR_X', year: 2023, density: 800, area: 10 }
-  ];
-
-  const currentYear = mode === 'BEFORE' ? 2018 : 2023;
-
-  const filteredMarkers = useMemo(() => markers.filter(m => {
-    const isYearMatch = m.year === currentYear;
-    const isFilterMatch = filter === 'ALL_RAILS' || m.type === filter;
-    return isYearMatch && isFilterMatch;
-  }), [filter, currentYear]);
+  const filteredMarkers = useMemo(() => {
+    if (!metrics) return [];
+    return metrics.filter(m => {
+        const isYearMatch = m.year === year;
+        const isFilterMatch = filter === 'ALL_RAILS' || m.land_use_type === filter;
+        return isYearMatch && isFilterMatch;
+    });
+  }, [metrics, year, filter]);
 
   // Deck.gl Heatmap Layer Logic
   const layers = [
     showHeatmap && new HeatmapLayer({
       id: 'heatmap-layer',
       data: filteredMarkers,
-      getPosition: (d: any) => d.pos,
-      getWeight: (d: any) => d.density,
+      getPosition: (d: any) => [d.longitude, d.latitude],
+      getWeight: (d: any) => d.population_density,
       radiusPixels: 60,
       intensity: 1,
       threshold: 0.03
     })
   ].filter(Boolean);
+
+    const getMarkerColor = (type: string) => {
+        const colors: any = {
+            'URBAN': '#00ff00',      // Neon Green
+            'INDUSTRIAL': '#ffcc00', // Amber
+            'SUBURBAN': '#00ccff',   // Sky Blue
+            'RESIDENTIAL': '#ff00ff', // Fuchsia
+            'COMMERCIAL': '#ff3366',  // Rose
+            'RURAL': '#94a3b8'       // Slate
+        };
+        return colors[type] || '#ffffff'; // Fallback to White for visibility
+    };
 
   return (
     <div className="w-full h-full relative">
@@ -75,25 +80,27 @@ export default function MapComponent({ filter, mode, showHeatmap, onMarkerClick 
         />
         
         {/* Intelligence Nodes (Always Visible) */}
-        {!showHeatmap && filteredMarkers.map(marker => (
+        {!showHeatmap && filteredMarkers.map((marker, idx) => (
             <CircleMarker 
-                key={marker.id}
-                center={[marker.pos[1], marker.pos[0]] as [number, number]} 
+                key={`${marker.aoi_id}-${idx}`}
+                center={[marker.latitude, marker.longitude] as [number, number]} 
                 pathOptions={{ 
-                    color: marker.type === 'LIVE' ? '#10b981' : marker.type === 'PILOT' ? '#38bdf8' : '#f59e0b', 
-                    fillColor: marker.type === 'LIVE' ? '#10b981' : marker.type === 'PILOT' ? '#38bdf8' : '#f59e0b', 
-                    fillOpacity: 0.6,
-                    weight: 2
+                    color: getMarkerColor(marker.land_use_type), 
+                    fillColor: getMarkerColor(marker.land_use_type), 
+                    fillOpacity: 0.8,
+                    weight: 3
                 }} 
-                radius={marker.area * 1.5}
+                radius={Math.max(6, Math.sqrt(marker.built_up_area_sqkm) * 2.5)}
                 eventHandlers={{
                     click: () => onMarkerClick(marker)
                 }}
             >
                 <Popup>
                     <div className="text-xs font-mono bg-[#0B1117] text-white p-2 border border-[#1F2937]">
-                        <p className="font-bold uppercase">{marker.name} // {marker.year}</p>
-                        <p className="mt-1 text-[10px] text-slate-400 text-ellipsis overflow-hidden">DENSITY: {marker.density}/km²</p>
+                        <p className="font-bold uppercase">{marker.aoi_id} // {marker.year}</p>
+                        <p className="mt-1 text-[10px] text-slate-400">TYPE: {marker.land_use_type}</p>
+                        <p className="text-[10px] text-slate-400">DENSITY: {marker.population_density}/km²</p>
+                        <p className="text-[10px] text-slate-400">INFRA: {marker.infrastructure_index}</p>
                     </div>
                 </Popup>
             </CircleMarker>
