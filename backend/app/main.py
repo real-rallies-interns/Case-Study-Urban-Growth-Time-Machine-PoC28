@@ -20,7 +20,7 @@ aoi_db = {}
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -123,12 +123,22 @@ async def health_check():
     fallback_path = "/app/data/synthetic_growth_data.json"
     fallback_exists = os.path.exists(fallback_path)
     
+    # Check data content
+    records_count = 0
+    if fallback_exists:
+        try:
+            data = DataService.load_synthetic_data()
+            records_count = len(data.get("data", []))
+        except:
+            records_count = -1 # Error reading
+            
     return {
         "status": "healthy",
         "env_path": path,
         "env_path_exists": exists,
         "fallback_path": fallback_path,
         "fallback_exists": fallback_exists,
+        "records_found": records_count,
         "cwd": os.getcwd()
     }
 
