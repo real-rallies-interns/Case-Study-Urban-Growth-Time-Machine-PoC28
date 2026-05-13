@@ -56,12 +56,12 @@ export default function MapComponent({ metrics, year, filter, showHeatmap, onMar
 
     const getMarkerColor = (type: string) => {
         const colors: any = {
-            'URBAN': '#00ff00',      // Neon Green
-            'INDUSTRIAL': '#ffcc00', // Amber
-            'SUBURBAN': '#00ccff',   // Sky Blue
-            'RESIDENTIAL': '#ff00ff', // Fuchsia
-            'COMMERCIAL': '#ff3366',  // Rose
-            'RURAL': '#94a3b8'       // Slate
+            'URBAN': '#38BDF8',      // Electric Cyan
+            'INDUSTRIAL': '#818CF8', // Indigo
+            'SUBURBAN': '#0ea5e9',   // Light Blue
+            'RESIDENTIAL': '#6366f1', // Indigo Light
+            'COMMERCIAL': '#22d3ee',  // Cyan 400
+            'RURAL': '#475569'       // Slate 600
         };
         return colors[type] || '#ffffff'; // Fallback to White for visibility
     };
@@ -73,7 +73,7 @@ export default function MapComponent({ metrics, year, filter, showHeatmap, onMar
         center={position} 
         zoom={13} 
         scrollWheelZoom={false} 
-        style={{ height: '100%', width: '100%', background: '#040705' }}
+        style={{ height: '100%', width: '100%', background: '#030712' }}
       >
         <TileLayer
           attribution='&copy; CARTO'
@@ -89,19 +89,18 @@ export default function MapComponent({ metrics, year, filter, showHeatmap, onMar
                     color: getMarkerColor(marker.land_use_type), 
                     fillColor: getMarkerColor(marker.land_use_type), 
                     fillOpacity: 0.8,
-                    weight: 3
+                    weight: 2
                 }} 
-                radius={Math.max(6, Math.sqrt(marker.built_up_area_sqkm) * 2.5)}
+                radius={Math.max(5, Math.sqrt(marker.built_up_area_sqkm) * 2)}
                 eventHandlers={{
                     click: () => onMarkerClick(marker)
                 }}
             >
                 <Popup>
                     <div className="text-xs font-mono bg-[#0B1117] text-white p-2 border border-[#1F2937]">
-                        <p className="font-bold uppercase">{marker.aoi_id} // {marker.year}</p>
+                        <p className="font-bold uppercase text-accent-primary">{marker.aoi_id} // {marker.year}</p>
                         <p className="mt-1 text-[10px] text-slate-400">TYPE: {marker.land_use_type}</p>
-                        <p className="text-[10px] text-slate-400">DENSITY: {marker.population_density}/km²</p>
-                        <p className="text-[10px] text-slate-400">INFRA: {marker.infrastructure_index}</p>
+                        <p className="text-[10px] text-slate-400">DENSITY: {marker.population_density.toFixed(0)}/km²</p>
                     </div>
                 </Popup>
             </CircleMarker>
@@ -116,8 +115,8 @@ export default function MapComponent({ metrics, year, filter, showHeatmap, onMar
                         <CircleMarker
                             center={[marker.latitude, marker.longitude] as [number, number]}
                             pathOptions={{ 
-                                color: '#10b981', 
-                                fillColor: '#10b981', 
+                                color: '#38BDF8', 
+                                fillColor: '#38BDF8', 
                                 fillOpacity: 0.2,
                                 weight: 2,
                                 dashArray: '5, 10'
@@ -128,8 +127,8 @@ export default function MapComponent({ metrics, year, filter, showHeatmap, onMar
                         <CircleMarker
                             center={[marker.latitude, marker.longitude] as [number, number]}
                             pathOptions={{ 
-                                color: '#10b981', 
-                                fillColor: '#10b981', 
+                                color: '#38BDF8', 
+                                fillColor: '#38BDF8', 
                                 fillOpacity: 0.1,
                                 weight: 1
                             }}
@@ -155,8 +154,6 @@ export default function MapComponent({ metrics, year, filter, showHeatmap, onMar
           />
         </div>
       )}
-      
-      {/* Marker info indicator removed for cleaner cinematic view, handled by slide-over */}
     </div>
   );
 }

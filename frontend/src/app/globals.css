@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #040705;
+  --background: #030712;
   --foreground: #F8FAFC;
   --surface: #0B1117;
-  --accent-primary: #10B981;
-  --accent-secondary: #34D399;
-  --border: #111827;
-  --card-glow: rgba(16, 185, 129, 0.1);
+  --accent-primary: #38BDF8;
+  --accent-secondary: #818CF8;
+  --border: #1F2937;
+  --card-glow: rgba(56, 189, 248, 0.1);
 }
 
 @theme inline {
@@ -24,7 +24,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans);
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 /* Glassmorphism utility */
@@ -40,6 +40,13 @@ body {
 }
 
 /* 2-Column System Layout */
+.dashboard-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background: var(--background);
+}
+
 .main-stage {
   width: 70%;
   height: 100vh;
@@ -52,6 +59,8 @@ body {
   height: 100vh;
   border-left: 1px solid var(--border);
   background: #060a14;
+  overflow-y: auto;
+  z-index: 10;
 }
 
 .ticker-container {
@@ -84,43 +93,25 @@ body {
 
 .metric-card {
   background: #0B1117;
-  border: 1px solid #111827;
+  border: 1px solid #1F2937;
   padding: 16px;
   border-radius: 4px;
 }
 
-/* Slide-over Panel */
-.slide-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 100vh;
-  width: 30vw;
-  min-width: 350px;
-  background: rgba(4, 7, 5, 0.95);
-  backdrop-filter: blur(20px);
-  border-left: 1px solid var(--border);
-  z-index: 1000;
-  transform: translateX(100%);
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+/* Custom Scrollbar for Sidebar */
+.sidebar::-webkit-scrollbar {
+  width: 4px;
 }
 
-.slide-panel.open {
-  transform: translateX(0);
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
-  z-index: 999;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
+.sidebar::-webkit-scrollbar-thumb {
+  background: #1F2937;
+  border-radius: 2px;
 }
 
-.overlay.open {
-  opacity: 1;
-  pointer-events: auto;
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
 }
