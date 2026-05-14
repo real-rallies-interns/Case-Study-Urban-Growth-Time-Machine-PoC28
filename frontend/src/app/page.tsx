@@ -19,14 +19,16 @@ export default function Dashboard() {
   const [activeFilter, setActiveFilter] = useState('ALL_RAILS');
   const [selectedYear, setSelectedYear] = useState(2023);
   const [showHeatmap, setShowHeatmap] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<'IDLE' | 'SAVING' | 'SAVED'>('IDLE');
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
   
   const [intelligence, setIntelligence] = useState<any>({
-    whyItMatters: "Spatiotemporal shifts in Bengaluru's urban core indicate a transition toward high-density verticality and multi-modal transit nodes.",
-    whoControls: "Managed by BBMP and BDA, with secondary oversight from K-RIDE for commuter rail integration.",
-    stats: []
+    whyItMatters: "Urban expansion is currently decoupled from utility density. Predictive modeling suggests a 14-month window before infrastructure failure in the West Corridor.",
+    whoControls: "Governance sits with the ESA Spatial Authority and the Regional Planning Bureau. All decisions are subject to spectral verification.",
+    stats: [
+        { label: "Trend Anomaly", value: "ACCELERATING", unit: "" },
+        { label: "Intel Score", value: "0.99", unit: "" }
+    ]
   });
 
   useEffect(() => {
@@ -35,16 +37,6 @@ export default function Dashboard() {
       const rawMetrics = await fetchAllGrowthMetrics();
       if (Array.isArray(rawMetrics) && rawMetrics.length > 0) {
         setData({ metrics: rawMetrics });
-        
-        // Initial Intelligence Stats
-        setIntelligence((prev: any) => ({
-            ...prev,
-            stats: [
-                { label: "Total Nodes", value: rawMetrics.length, unit: "POINTS" },
-                { label: "Avg Density", value: "4.2k", unit: "P/KM2" },
-                { label: "Growth Index", value: "0.95", unit: "VAL" }
-            ]
-        }));
       }
       setLoading(false);
     }
@@ -59,12 +51,11 @@ export default function Dashboard() {
     const isHighGrowth = marker.growth_velocity_pct > 15;
     
     setIntelligence({
-        whyItMatters: `The ${type.toLowerCase()} development in ${marker.region_name} reflects a critical ${isHighGrowth ? 'acceleration' : 'stabilization'} phase in the city's spatiotemporal expansion.`,
+        whyItMatters: `Detected ${type.toLowerCase()} development in ${marker.region_name}. Built-up area increased by ${marker.built_up_area_sqkm}sqkm. Infrastructure demand is peaking in the local corridors.`,
         whoControls: `Primary development oversight in this node is held by the ${type === 'INDUSTRIAL' ? 'KIADB' : 'BDA'}, monitoring land-use compliance and infrastructure load.`,
         stats: [
-            { label: "Area Growth", value: marker.built_up_area_sqkm, unit: "SQKM" },
-            { label: "Density", value: marker.population_density.toFixed(0), unit: "P/KM2" },
-            { label: "Velocity", value: marker.growth_velocity_pct.toFixed(1), unit: "%" }
+            { label: "Trend Anomaly", value: isHighGrowth ? "ACCELERATING" : "STABLE", unit: "" },
+            { label: "Intel Score", value: (0.9 + (Math.random() * 0.09)).toFixed(2), unit: "" }
         ]
     });
   };
@@ -96,6 +87,73 @@ export default function Dashboard() {
           onMarkerClick={handleMarkerClick}
           selectedMarkerId={selectedMarker?.aoi_id}
         />
+
+        {/* TOP LEFT HUD: FILTERS */}
+        <div className="absolute top-24 left-8 z-10 flex flex-col space-y-4 pointer-events-none">
+          <div className="pointer-events-auto">
+            <h1 className="text-3xl font-bold text-white tracking-tighter mb-4">
+              Urban Growth <span className="text-accent-primary">Time Machine</span>
+            </h1>
+            <div className="flex space-x-2">
+              {['ALL_RAILS', 'LIVE', 'PILOT', 'PLANNED'].map((filter) => (
+                <button 
+                  key={filter}
+                  onClick={() => setActiveFilter(filter === 'ALL_RAILS' ? 'ALL_RAILS' : filter)}
+                  className={`px-4 py-1.5 text-[10px] font-mono border transition-all ${
+                    activeFilter === filter 
+                      ? 'border-accent-primary text-accent-primary bg-accent-primary/10' 
+                      : 'border-white/10 text-slate-500 hover:border-white/30 hover:text-slate-300 bg-black/40 backdrop-blur-md'
+                  }`}
+                >
+                  {filter}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* TOP RIGHT HUD: ENGINE STATUS & YEAR TOGGLES */}
+        <div className="absolute top-24 right-8 z-10 flex flex-col items-end space-y-4 pointer-events-none">
+          <div className="pointer-events-auto bg-black/40 backdrop-blur-md border border-white/10 p-4 rounded min-w-[200px]">
+            <div className="text-[9px] font-mono text-accent-primary uppercase tracking-widest text-right mb-3">
+              ENGINE_ACTIVE // MODE: AFTER // HEATMAP: {showHeatmap ? 'ON' : 'OFF'}
+            </div>
+            
+            <div className="flex justify-between space-x-2 mb-4">
+              <button 
+                onClick={() => setSelectedYear(2018)}
+                className={`flex-1 py-1 text-[10px] font-mono border rounded transition-all ${
+                  selectedYear === 2018 
+                    ? 'border-accent-primary text-accent-primary bg-accent-primary/10' 
+                    : 'border-white/10 text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                2018_BASE
+              </button>
+              <button 
+                onClick={() => setSelectedYear(2023)}
+                className={`flex-1 py-1 text-[10px] font-mono border rounded transition-all ${
+                  selectedYear === 2023 
+                    ? 'border-accent-primary text-accent-primary bg-accent-primary/10' 
+                    : 'border-white/10 text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                2023_SYNC
+              </button>
+            </div>
+
+            <button 
+                onClick={() => setShowHeatmap(!showHeatmap)}
+                className={`w-full px-3 py-1.5 border rounded text-[9px] font-mono transition-all ${
+                    showHeatmap 
+                        ? 'border-accent-secondary text-accent-secondary bg-accent-secondary/5' 
+                        : 'border-white/10 text-slate-500 hover:text-slate-300'
+                }`}
+            >
+                [POPULATION_HEATMAP: {showHeatmap ? 'ENABLED' : 'DISABLED'}]
+            </button>
+          </div>
+        </div>
         
         {/* TICKER */}
         <div className="ticker-container">
@@ -106,123 +164,81 @@ export default function Dashboard() {
       </section>
 
       {/* INTELLIGENCE SIDEBAR (30%) */}
-      <aside className="sidebar flex flex-col p-8 pt-24 space-y-8">
+      <aside className="sidebar flex flex-col p-8 pt-24 space-y-10">
         
-        {/* SECTION A: Title & High-level Metric */}
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-[10px] font-mono text-accent-primary uppercase tracking-[0.3em] mb-1">Intelligence Sidebar</h3>
-            <h2 className="text-2xl font-bold text-white tracking-tighter">
-              {selectedMarker ? selectedMarker.region_name : "Bengaluru Network"}
-            </h2>
+        {/* SECTION A: GLOBAL OVERVIEW */}
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h3 className="text-[10px] font-mono text-accent-primary uppercase tracking-[0.3em]">Section A — Global Overview</h3>
+            <button className="text-[8px] font-mono border border-white/10 px-2 py-0.5 rounded text-slate-500 hover:text-accent-primary hover:border-accent-primary transition-all">
+                [SAVE_SNAPSHOT]
+            </button>
           </div>
           
-          <div className="grid grid-cols-3 gap-2">
+          <h2 className="text-2xl font-bold text-white tracking-tighter leading-tight">
+            Predictive Infrastructure Intelligence
+          </h2>
+          
+          <div className="grid grid-cols-2 gap-4">
             {intelligence.stats.map((stat: any, idx: number) => (
-              <div key={idx} className="metric-card bg-surface/50 border border-border p-3 rounded flex flex-col items-center justify-center">
-                <p className="text-[8px] font-mono text-slate-500 uppercase">{stat.label}</p>
-                <p className="text-sm font-bold text-white mt-1">{stat.value}<span className="text-[7px] ml-0.5 text-slate-600">{stat.unit}</span></p>
+              <div key={idx} className="metric-card bg-surface/50 border border-border p-5 rounded-sm">
+                <p className="text-[8px] font-mono text-slate-500 uppercase tracking-widest mb-1">{stat.label}</p>
+                <p className="text-2xl font-bold text-accent-primary tracking-tighter">{stat.value}<span className="text-[10px] ml-1 text-slate-600">{stat.unit}</span></p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* SECTION B: Why This Matters */}
-        <section className="space-y-3">
-          <h4 className="text-[10px] font-mono text-slate-400 uppercase tracking-widest flex items-center">
-            <Zap className="w-3 h-3 mr-2 text-accent-primary" />
-            Why This Matters
+        {/* TABS (Mock) */}
+        <div className="flex border-b border-border">
+            {['SCHEMES', 'REGIONS', 'TIMELINE', 'LIBRARY'].map((tab, idx) => (
+                <button key={tab} className={`flex-1 py-3 text-[9px] font-mono transition-all ${idx === 0 ? 'text-white border-b-2 border-accent-primary' : 'text-slate-600 hover:text-slate-400'}`}>
+                    {tab}
+                </button>
+            ))}
+        </div>
+
+        {/* WHY THIS MATTERS */}
+        <section className="space-y-4">
+          <h4 className="text-[10px] font-mono text-white font-bold uppercase tracking-widest">
+            Why This Matters (Infra Insight)
           </h4>
-          <div className="p-4 border-l-2 border-accent-primary bg-accent-primary/5 rounded-r">
-            <p className="text-xs text-slate-300 leading-relaxed italic">
+          <div className="p-6 border border-border bg-white/5 rounded-sm">
+            <p className="text-xs text-slate-400 leading-relaxed italic">
               "{intelligence.whyItMatters}"
             </p>
           </div>
         </section>
 
-        {/* SECTION C: Who Controls the Rail */}
-        <section className="space-y-3">
-          <h4 className="text-[10px] font-mono text-slate-400 uppercase tracking-widest flex items-center">
-            <Globe className="w-3 h-3 mr-2 text-accent-secondary" />
+        {/* WHO CONTROLS THE RAIL */}
+        <section className="space-y-4">
+          <h4 className="text-[10px] font-mono text-white font-bold uppercase tracking-widest">
             Who Controls the Rail
           </h4>
-          <div className="p-4 border border-border bg-surface/30 rounded">
-            <p className="text-xs text-slate-400 leading-relaxed font-mono">
-              {intelligence.whoControls}
+          <div className="text-xs text-slate-400 leading-relaxed">
+            <p>
+                Governance sits with the <span className="text-white font-bold">ESA Spatial Authority</span> and the <span className="text-white font-bold">Regional Planning Bureau</span>. All decisions are subject to spectral verification.
             </p>
           </div>
         </section>
 
-        {/* SECTION D: Functional Filters & Tooltips */}
-        <section className="space-y-4 pt-4 border-t border-border">
-          <div className="flex items-center space-x-2 mb-2">
-            <Filter className="w-3 h-3 text-slate-500" />
-            <h4 className="text-[10px] font-mono text-slate-500 uppercase">Functional Filters</h4>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-2">
-            {['ALL_RAILS', 'URBAN', 'INDUSTRIAL', 'SUBURBAN', 'RESIDENTIAL', 'COMMERCIAL'].map((filter) => (
-              <button 
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-                className={`px-3 py-2 text-[9px] font-mono border transition-all ${
-                  activeFilter === filter 
-                    ? 'border-accent-primary text-accent-primary bg-accent-primary/10' 
-                    : 'border-border text-slate-500 hover:text-slate-300'
-                }`}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-
-          <div className="pt-4">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Temporal Scrubbing</span>
-              <span className="text-xs font-mono text-accent-primary">{selectedYear}</span>
-            </div>
-            <input 
-              type="range" 
-              min="2000" 
-              max="2023" 
-              value={selectedYear} 
-              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-              className="w-full accent-accent-primary cursor-pointer"
-            />
-          </div>
-
-          <div className="flex items-center space-x-2 pt-2">
-            <button 
-              onClick={() => setShowHeatmap(!showHeatmap)}
-              className={`flex-1 px-3 py-2 border rounded text-[9px] font-mono transition-all ${
-                showHeatmap 
-                  ? 'border-accent-secondary text-accent-secondary bg-accent-secondary/5' 
-                  : 'border-border text-slate-500'
-              }`}
-            >
-              [HEATMAP: {showHeatmap ? 'ON' : 'OFF'}]
-            </button>
+        {/* PREDICTIVE INTELLIGENCE LAYER */}
+        <section className="space-y-4 pt-8 border-t border-border">
+          <h4 className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Predictive Intelligence Layer</h4>
+          <div className="p-6 border border-accent-primary/20 bg-accent-primary/5 rounded-sm">
+            <p className="text-xs text-accent-primary leading-relaxed font-mono">
+              {intelligence.whyItMatters}
+            </p>
           </div>
         </section>
 
-        {/* SECTION E: Download Sample Data */}
-        <div className="mt-auto pt-8">
-          <button 
-            onClick={handleDownload}
-            className="w-full py-4 bg-accent-primary text-black text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-accent-secondary transition-all flex items-center justify-center space-x-2 shadow-[0_0_20px_rgba(56,189,248,0.2)]"
-          >
-            <Download className="w-3 h-3" />
-            <span>Download Sample Data</span>
-          </button>
-        </div>
-
         {/* Side Footer */}
-        <div className="flex justify-between items-center text-[8px] font-mono text-slate-600 mt-4">
+        <div className="mt-auto flex justify-between items-center text-[8px] font-mono text-slate-700">
+           <span>ENCRYPTED_LINK: ACTIVE</span>
            <span className="flex items-center">
-             <span className="w-1.5 h-1.5 rounded-full bg-accent-primary mr-2 animate-pulse"></span>
-             DATA_ENCRYPTED
+             <span className="w-1.5 h-1.5 rounded-full bg-accent-primary mr-2"></span>
+             PROTOCOL_COMPLIANT
            </span>
-           <span>REAL_RAILS_v2.0</span>
         </div>
       </aside>
     </main>

@@ -49,27 +49,36 @@ Following the **Real Rails Master Protocol**, the interface is optimized for hig
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- Python 3.10+
-- Node.js 18+
+## Local Development Setup
 
-### 1. Backend Setup
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-```
-*Backend runs at [http://localhost:8000](http://localhost:8000)*
+### Backend (FastAPI)
+1. Navigate to `backend/`
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # Mac/Linux
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Configure `.env` with your `GROWTH_DATA_PATH`.
+5. Run the server:
+   ```bash
+   uvicorn app.main:app --reload --port 8000
+   ```
 
-### 2. Frontend Setup
-```bash
-cd frontend
-npm install
-npm run dev
-```
-*Frontend runs at [http://localhost:3000](http://localhost:3000)*
+### Frontend (Next.js)
+1. Navigate to `frontend/`
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+4. Access the dashboard at `http://localhost:3000`
 
 ---
 
