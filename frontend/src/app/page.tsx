@@ -89,7 +89,7 @@ export default function Dashboard() {
         />
 
         {/* TOP LEFT HUD: FILTERS */}
-        <div className="absolute top-24 left-8 z-10 flex flex-col space-y-4 pointer-events-none">
+        <div className="absolute top-20 left-16 z-[700] flex flex-col space-y-4 pointer-events-none">
           <div className="pointer-events-auto">
             <h1 className="text-3xl font-bold text-white tracking-tighter mb-4">
               Urban Growth <span className="text-accent-primary">Time Machine</span>
@@ -113,7 +113,7 @@ export default function Dashboard() {
         </div>
 
         {/* TOP RIGHT HUD: ENGINE STATUS & YEAR TOGGLES */}
-        <div className="absolute top-24 right-8 z-10 flex flex-col items-end space-y-4 pointer-events-none">
+        <div className="absolute top-20 right-8 z-[700] flex flex-col items-end space-y-4 pointer-events-none">
           <div className="pointer-events-auto bg-black/40 backdrop-blur-md border border-white/10 p-4 rounded min-w-[200px]">
             <div className="text-[9px] font-mono text-accent-primary uppercase tracking-widest text-right mb-3">
               ENGINE_ACTIVE // MODE: AFTER // HEATMAP: {showHeatmap ? 'ON' : 'OFF'}
