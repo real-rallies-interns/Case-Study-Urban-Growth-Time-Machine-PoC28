@@ -18,7 +18,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('ALL_RAILS');
   const [selectedYear, setSelectedYear] = useState(2023);
-  const [showHeatmap, setShowHeatmap] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
   
@@ -83,7 +82,6 @@ export default function Dashboard() {
           metrics={data?.metrics}
           year={selectedYear}
           filter={activeFilter} 
-          showHeatmap={showHeatmap} 
           onMarkerClick={handleMarkerClick}
           selectedMarkerId={selectedMarker?.aoi_id}
         />
@@ -113,13 +111,13 @@ export default function Dashboard() {
         </div>
 
         {/* TOP RIGHT HUD: ENGINE STATUS & YEAR TOGGLES */}
-        <div className="absolute top-20 right-8 z-[700] flex flex-col items-end space-y-4 pointer-events-none">
+        <div className="absolute top-12 right-8 z-[700] flex flex-col items-end space-y-4 pointer-events-none">
           <div className="pointer-events-auto bg-black/40 backdrop-blur-md border border-white/10 p-4 rounded min-w-[200px]">
             <div className="text-[9px] font-mono text-accent-primary uppercase tracking-widest text-right mb-3">
-              ENGINE_ACTIVE // MODE: AFTER // HEATMAP: {showHeatmap ? 'ON' : 'OFF'}
+              ENGINE_ACTIVE // MODE: AFTER
             </div>
             
-            <div className="flex justify-between space-x-2 mb-4">
+            <div className="flex justify-between space-x-2">
               <button 
                 onClick={() => setSelectedYear(2018)}
                 className={`flex-1 py-1 text-[10px] font-mono border rounded transition-all ${
@@ -141,17 +139,6 @@ export default function Dashboard() {
                 2023_SYNC
               </button>
             </div>
-
-            <button 
-                onClick={() => setShowHeatmap(!showHeatmap)}
-                className={`w-full px-3 py-1.5 border rounded text-[9px] font-mono transition-all ${
-                    showHeatmap 
-                        ? 'border-accent-secondary text-accent-secondary bg-accent-secondary/5' 
-                        : 'border-white/10 text-slate-500 hover:text-slate-300'
-                }`}
-            >
-                [POPULATION_HEATMAP: {showHeatmap ? 'ENABLED' : 'DISABLED'}]
-            </button>
           </div>
         </div>
         

@@ -3,9 +3,7 @@
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { useEffect, useState, useMemo } from 'react';
-import { DeckGL } from '@deck.gl/react';
-import { HeatmapLayer } from '@deck.gl/aggregation-layers';
+import { useMemo } from 'react';
 
 // Fix for default marker icons
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -24,12 +22,11 @@ interface MapProps {
     metrics: any[];
     year: number;
     filter: string;
-    showHeatmap: boolean;
     onMarkerClick: (marker: any) => void;
     selectedMarkerId?: string | null;
 }
 
-export default function MapComponent({ metrics, year, filter, showHeatmap, onMarkerClick, selectedMarkerId }: MapProps) {
+export default function MapComponent({ metrics, year, filter, onMarkerClick, selectedMarkerId }: MapProps) {
   const position: [number, number] = [12.9716, 77.5946];
   
   const filteredMarkers = useMemo(() => {
@@ -40,19 +37,6 @@ export default function MapComponent({ metrics, year, filter, showHeatmap, onMar
         return isYearMatch && isFilterMatch;
     });
   }, [metrics, year, filter]);
-
-  // Deck.gl Heatmap Layer Logic
-  const layers = [
-    showHeatmap && new HeatmapLayer({
-      id: 'heatmap-layer',
-      data: filteredMarkers,
-      getPosition: (d: any) => [d.longitude, d.latitude],
-      getWeight: (d: any) => d.population_density,
-      radiusPixels: 60,
-      intensity: 1,
-      threshold: 0.03
-    })
-  ].filter(Boolean);
 
     const getMarkerColor = (type: string) => {
         const colors: any = {
@@ -68,7 +52,6 @@ export default function MapComponent({ metrics, year, filter, showHeatmap, onMar
 
   return (
     <div className="w-full h-full relative">
-      {/* Base Leaflet Map */}
       <MapContainer 
         center={position} 
         zoom={13} 
@@ -80,8 +63,7 @@ export default function MapComponent({ metrics, year, filter, showHeatmap, onMar
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
         
-        {/* Intelligence Nodes (Always Visible) */}
-        {!showHeatmap && filteredMarkers.map((marker, idx) => (
+        {filteredMarkers.map((marker, idx) => (
             <CircleMarker 
                 key={`${marker.aoi_id}-${idx}`}
                 center={[marker.latitude, marker.longitude] as [number, number]} 
@@ -106,7 +88,6 @@ export default function MapComponent({ metrics, year, filter, showHeatmap, onMar
             </CircleMarker>
         ))}
 
-        {/* Selected Node Analysis Layer */}
         {selectedMarkerId && metrics?.find(m => m.aoi_id === selectedMarkerId && m.year === year) && (
             (() => {
                 const marker = metrics.find(m => m.aoi_id === selectedMarkerId && m.year === year);
@@ -139,21 +120,6 @@ export default function MapComponent({ metrics, year, filter, showHeatmap, onMar
             })()
         )}
       </MapContainer>
-
-      {/* Overlaying Deck.gl for Heatmap */}
-      {showHeatmap && (
-        <div className="absolute inset-0 z-[500] pointer-events-none">
-          <DeckGL
-            initialViewState={{
-              longitude: position[1],
-              latitude: position[0],
-              zoom: 12
-            }}
-            controller={false}
-            layers={layers}
-          />
-        </div>
-      )}
     </div>
   );
 }
