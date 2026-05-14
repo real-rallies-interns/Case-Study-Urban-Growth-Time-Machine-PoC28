@@ -38,8 +38,8 @@ export interface AOIDb extends AOISave {
   created_at: string;
 }
 
-// Point directly to the backend in Azure to ensure connectivity
-const API_BASE_URL = 'https://poc-urbangyowthbackend.ashybush-4248957c.centralindia.azurecontainerapps.io/api/v1';
+// Use the Next.js rewrite proxy — works locally and in production
+const API_BASE_URL = '/api/v1';
 
 export async function fetchGrowthMetrics(aoiId: string) {
   try {
